@@ -3,6 +3,8 @@ import React from 'react'
 
 import { Model } from '../model'
 
+const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
+
 export default function Home() {
   // initial instantiation of the Model
   const [model, setModel] = React.useState(new Model(0))
