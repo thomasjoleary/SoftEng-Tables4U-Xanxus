@@ -1,0 +1,169 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+}
+
+.header {
+    font-size: 72px;
+    font-weight: bold;
+}
+
+.subtext {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.subheader {
+    font-size: 54px;
+    font-weight: bold;
+}
+
+.button {
+    padding: 10px 20px;
+    font-size: 27px;
+    cursor: pointer;
+}
+
+.owner-link {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 27px;
+}
+
+.tables4u {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    font-size: 72px;
+    background: none;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+}
+
+.wide {
+    width: 382px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.schedule-tables {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.schedule {
+    width: 45%;
+}
+
+.day-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.day-row span {
+    width: 25%;
+    text-align: left;
+}
+
+.time-input {
+    width: 30%;
+    padding: 5px;
+}
+
+.tables {
+    width: 100%;
+}
+
+.table-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.seat-input {
+    width: 40px;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.table-btn {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.add-remove-row {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 20px;
+}
+
+.back-button {
+    margin-top: 30px;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.tables {
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.add-remove-row {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    padding: 10px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.table-btn {
+    padding: 5px 10px;
+    font-size: 16px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.seat-input {
+    width: 40px;
+    text-align: center;
+    margin: 0 5px;
+}
+
+.tables-wrapper {
+    position: relative;
+    width: 60%; /* Squished tables container */
+    margin: 0 auto; /* Centers the tables section */
+}
+
+.container {
+    overflow-x: hidden;
+    padding: 0 10px;
+}
