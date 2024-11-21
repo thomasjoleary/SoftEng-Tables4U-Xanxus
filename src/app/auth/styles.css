@@ -25,7 +25,7 @@ body {
 
 .button {
     padding: 10px 20px;
-    font-size: 27px;
+    font-size: 25px;
     cursor: pointer;
 }
 
@@ -116,11 +116,9 @@ body {
     margin-top: 20px;
 }
 
-.back-button {
-    margin-top: 30px;
-}
 
 .back-btn {
+    margin-top: 30px;
     padding: 10px 20px;
     cursor: pointer;
 }
@@ -159,11 +157,81 @@ body {
 
 .tables-wrapper {
     position: relative;
-    width: 60%; /* Squished tables container */
-    margin: 0 auto; /* Centers the tables section */
+    width: 60%; 
+    margin: 0 auto; 
 }
 
 .container {
     overflow-x: hidden;
     padding: 0 10px;
+    overflow-y: auto;
+}
+
+/* for customer home page */
+
+.bottom-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; 
+    margin-top: 20px; 
+}
+
+.allRestaurants{
+    margin-bottom: 20px;
+}
+
+.input.searchRestaurants select, .input.restaurantName,
+.input.findTable select {
+    height: 30px; 
+    padding: 10px 20px; 
+    font-size: 18px; 
+    border-radius: 0px; 
+}
+
+/* listing restaurants tables */
+
+.restaurantsTable, .tableForAdminListRestaurants {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.restaurantsTable th, .restaurantsTable td, .tableForAdminListRestaurants td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.restaurantsTable th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.restaurantsTable tbody, .tableForAdminListRestaurants tbody{
+    display: block;
+    width: 100%;
+}
+
+.restaurantsTable thead, .restaurantsTable tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; 
+}
+
+.restaurantsTable td, .tableForAdminListRestaurants td {
+    width: 50%; 
+}
+
+.container-list-admin {
+    max-height: 200px;
+    overflow-x: hidden;
+    padding: 0 10px;
+    overflow-y: auto;
+}
+
+.container-list-cust {
+    max-height: 200px;
+    overflow-x: hidden;
+    padding: 0 10px;
+    overflow-y: auto;
 }

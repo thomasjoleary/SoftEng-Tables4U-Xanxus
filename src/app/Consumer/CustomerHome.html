@@ -10,9 +10,12 @@
 
 <body>
     <button class="tables4u">Tables4U</button>
-    
-    <div className="input searchRestaurants">
-        <select className="dropdown month">
+    <p class="subheader"> Welcome, Customer!</p>
+
+    <button class="button allRestaurants"> List All Restaurants</button>
+
+    <div class="input searchRestaurants">
+        <select class="dropdown month">
             <option value="">Month</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -28,7 +31,7 @@
             <option value="12">12</option>
         </select>
 
-        <select className="dropdown day">
+        <select class="dropdown day">
             <option value="">Day</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -62,8 +65,9 @@
             <option value="30">30</option>
         </select>
 
-        <select className="dropdown time">
+        <select class="dropdown time">
             <option value="">Time</option>
+            <option value="1">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -88,11 +92,12 @@
             <option value="22">22</option>
             <option value="23">23</option>
         </select>
+        <button class="button searchRestaurants"> Search Restaurants </button>
     </div>
 
 
-    <div className="input findTable">
-        <select className="dropdown guests">
+    <div class="input findTable">
+        <select class="dropdown guests">
             <option value="">Guests</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -104,7 +109,7 @@
             <option value="8">8</option>
         </select>
 
-        <select className="dropdown month">
+        <select class="dropdown month">
             <option value="">Month</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -120,7 +125,7 @@
             <option value="12">12</option>
         </select>
 
-        <select className="dropdown day">
+        <select class="dropdown day">
             <option value="">Day</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -154,8 +159,9 @@
             <option value="30">30</option>
         </select>
 
-        <select className="dropdown time">
+        <select class="dropdown time">
             <option value="">Time</option>
+            <option value="1">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -180,15 +186,14 @@
             <option value="22">22</option>
             <option value="23">23</option>
         </select>
-
-        <input className="input restaurantName" type="text" placeholder="Enter Restaurant Name" />
+        <input class="input restaurantName" type="text" placeholder="Enter Restaurant Name" />
+        <button class="button findTable"> Find Table </button>
     </div>
 
-    <button className="button allRestaurants"> All Restaurants</button>
-    <button className="button searchRestaurants"> Search Restaurants </button>
-    <button className="button findTable"> Find Table </button>
-    <button className="button viewReservation"> View Reservation </button>
-    <button className="button cancelReservation"> Cancel Reservation </button>
+    <div class="bottom-buttons-container">
+        <button class="button viewReservation"> View Reservation </button>
+        <button class="button cancelReservation"> Cancel Reservation </button>
+    </div>
 </body>
 
 </html>
