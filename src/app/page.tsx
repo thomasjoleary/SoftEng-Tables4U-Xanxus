@@ -1,5 +1,8 @@
 'use client'                              // directive to clarify client-side. Place at top of ALL .tsx files
 import React from 'react'
+import axios from 'axios'
+
+import './styles.css'
 
 import { Model } from '../model'
 
@@ -16,10 +19,13 @@ export default function Home() {
   }
 
   return (
-
-    <div>
-      hi
-    </div>
+  <div>
+      <button className="button owner-link">For restaurant owners</button>
+      <p className="header">Tables4U</p>
+      <p className="subtext">we make restaurant hosting easy</p>
+      <button className="button">Find Restaurants</button>
+  </div>
+    
 
   )
 }
