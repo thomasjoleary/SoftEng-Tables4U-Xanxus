@@ -10,7 +10,7 @@ const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/
 
 export default function Home() {
   // initial instantiation of the Model
-  const [model, setModel] = React.useState(new Model(0))
+  const [model, setModel] = React.useState(new Model("Home"))
   const [redraw, forceRedraw] = React.useState(0)
 
   // helper function that forces React app to redraw whenever this is called.
