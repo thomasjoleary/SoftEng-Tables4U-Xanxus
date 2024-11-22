@@ -2,11 +2,23 @@
 import { error } from 'console'
 
 export class Model {
-    words : string[]
+    path : String
 
     /** which is zero-based. */
-    constructor(which:number) {
-        this.words = [""]
+    constructor(gpath : String) {
+        this.path = gpath
+    }
+
+    isPath(givenPath : String) {
+        if (this.path === givenPath) {
+            return true
+        }
+        return false
+    }
+
+    setPath(givenPath : String) {
+        this.path = givenPath
+        return true
     }
 
 }
