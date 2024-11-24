@@ -91,7 +91,7 @@ export default function Restaurant() {
 
   return (
     <body>
-      <button className="tables4u">Tables4U</button>
+      <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
 
       {/* For unactivated restaurant page */}
       {model.isPath("Manage Unactivated") ? (
