@@ -11,110 +11,56 @@ const dbConfig = {
     port: 3306,
 };
 
+const connection = await mysql.createConnection(dbConfig);
+
+const errorResponse = (statusCode, message) => ({
+    statusCode,
+    body: JSON.stringify({ error: message }),
+});
+
 export const handler = async (event) => {
     try {
-        const { path, httpMethod, body } = event;
+        console.log("Function started");
 
-        if (path === '/addRestaurant' && httpMethod === 'POST') {
-            const { name, address } = JSON.parse(body || "{}");
+        // Parse the request body
+        const { rid } = JSON.parse(event.body || "{}");
+        console.log(`Received data: rid=${rid}`);
 
-            if (!name || !address) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "Missing 'name' or 'address'" }),
-                };
-            }
+        // Validate required fields
+        if (!rid) return errorResponse(400, "This restaurant doesn’t exist.");
 
+        // Check if the restaurant exists
+        const [restaurantRows] = await connection.execute("SELECT * FROM Restaurants WHERE rid = ?", [rid]);
+        if (restaurantRows.length === 0) return errorResponse(400, "This restaurant doesn’t exist.");
 
+        console.log("Restaurant exists");
 
-            /*
-            // Generates a unique restaurant ID, could look something like this: 123e4567-e89b-12d3-a456-426614174000
-            const rid = uuidv4(); //does this even need to be here? it's covered in createRestaurant 
-            */
+        // Check if the daily schedule has been set
+        const [scheduleRows] = await connection.execute("SELECT * FROM Schedules WHERE rid = ?", [rid]);
+        if (scheduleRows.length === 0) return errorResponse(400, "Daily schedule has not been set.");
 
+        // Check if the number of tables has been set
+        const [tablesRows] = await connection.execute("SELECT * FROM Tables WHERE rid = ?", [rid]);
+        if (tablesRows.length === 0) return errorResponse(400, "Number of tables has not been set.");
 
-            // Insert into database
-            const query = `INSERT INTO Restaurants (rid, name, address) VALUES ($1, $2, $3)`;
-            await pool.query(query, [rid, name, address]);
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ message: "Restaurant added successfully", rid }),
-            };
+        // Check if the number of seats for each table has been set
+        for (const table of tablesRows) {
+            if (!table.seats || table.seats <= 0) return errorResponse(400, "Number of seats for each table has not been set.");
         }
 
-        if (path === '/activateRestaurant' && httpMethod === 'POST') {
-            const { rid } = JSON.parse(body || "{}");
+        console.log("Validation complete");
 
-            if (!rid) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "Missing 'rid'" }),
-                };
-            }
-
-            // Check if the restaurant actually exists
-            const restaurantQuery = `SELECT * FROM Restaurants WHERE rid = $1`;
-            const restaurantResult = await pool.query(restaurantQuery, [rid]);
-
-            if (restaurantResult.rowCount === 0) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "This restaurant doesn’t exist." }),
-                };
-            }
-
-            // Check if the daily schedule has been set
-            const scheduleQuery = `SELECT * FROM Schedules WHERE rid = $1`;
-            const scheduleResult = await pool.query(scheduleQuery, [rid]);
-
-            if (scheduleResult.rowCount === 0) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "Daily schedule has not been set." }),
-                };
-            }
-
-            // Check if the number of tables has been set
-            const tablesQuery = `SELECT * FROM Tables WHERE rid = $1`;
-            const tablesResult = await pool.query(tablesQuery, [rid]);
-
-            if (tablesResult.rowCount === 0) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "Number of tables has not been set." }),
-                };
-            }
-
-            // Check if the number of seats for each table has been set
-            const seatsQuery = `SELECT * FROM Seats WHERE rid = $1`;
-            const seatsResult = await pool.query(seatsQuery, [rid]);
-
-            if (seatsResult.rowCount === 0) {
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: "Number of seats for each table has not been set." }),
-                };
-            }
-
-            // Activate the restaurant
-            const activateQuery = `UPDATE Restaurants SET active = true WHERE rid = $1`;
-            await pool.query(activateQuery, [rid]);
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ rid, active: "true" }),
-            };
-        }
+        // Activate the restaurant
+        await connection.execute("UPDATE Restaurants SET active = true WHERE rid = ?", [rid]);
 
         return {
-            statusCode: 404,
-            body: JSON.stringify({ error: "Not Found" }),
+            statusCode: 200,
+            body: JSON.stringify({ rid, active: "true" }),
         };
 
-        
+       
     } catch (error) {
-        console.error("Error processing request:", error);
+        console.error("Error activating restaurant:", error);
         return {
             statusCode: 500,
             body: JSON.stringify({ error: "Internal Server Error" }),
