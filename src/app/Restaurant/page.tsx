@@ -5,6 +5,7 @@ import axios from 'axios'
 import './styles.css'
 import { create } from 'domain'
 import { Model } from '../../model'
+import { useRouter } from 'next/navigation'
 
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
 
@@ -12,6 +13,7 @@ export default function Restaurant() {
   const [redraw, forceRedraw] = React.useState(0)
   // use conditional for if activated vs unactivated???
   const [model, setModel] = React.useState(new Model("Manage Unactivated"))
+  const router = useRouter()
 
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {

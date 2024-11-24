@@ -5,12 +5,14 @@ import axios from 'axios'
 import './styles.css'
 import { create } from 'domain'
 import { Model } from '../../model'
+import { useRouter } from 'next/navigation'
 
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
 
 export default function Consumer() {
     const [redraw, forceRedraw] = React.useState(0)
     const [model, setModel] = React.useState(new Model("Consumer Home"))
+    const router = useRouter()
 
     // helper function that forces React app to redraw whenever this is called.
     function andRefreshDisplay() {
@@ -44,7 +46,7 @@ export default function Consumer() {
     return (
 
         <body>
-            <button className="tables4u">Tables4U</button>
+            <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
 
             {/* For consumer home page */}
             {model.isPath("Consumer Home") ? (
