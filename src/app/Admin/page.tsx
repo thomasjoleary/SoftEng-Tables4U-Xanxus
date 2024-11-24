@@ -5,12 +5,14 @@ import axios from 'axios'
 import './styles.css'
 import { create } from 'domain'
 import { Model } from '../../model'
+import { useRouter } from 'next/navigation'
 
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
 
 export default function Admin() {
   const [redraw, forceRedraw] = React.useState(0)
   const [model, setModel] = React.useState(new Model("Admin List Restaurants"))
+  const router = useRouter()
 
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {
