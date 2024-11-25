@@ -30,8 +30,10 @@ export default function Consumer() {
 
     function listAllRestaurants() {
         setLoading(true)
+        //send get request
         axios
             .get(`${gateway}listActiveRestaurants`)
+            //parse the response and set it to the new array of restaurants
             .then((response) => {
                 const parsedBody = JSON.parse(response.data.body)
                 setRestaurants(parsedBody.restaurants)
