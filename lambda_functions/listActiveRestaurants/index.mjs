@@ -18,9 +18,12 @@ export const handler = async (event) => {
         console.log("Function started");
 
         // Check if active restaurants exist
+        // const [restaurantRows] = await connection.execute(
+        //     "SELECT rid, name, address, activated FROM Restaurants WHERE activated = 1"
+        // );
         const [restaurantRows] = await connection.execute(
-            "SELECT rid, name, activated FROM Restaurants WHERE activated = true"
-        );
+                 "SELECT name, address FROM Restaurants WHERE activated = 1"
+             );
 
         if (restaurantRows.length === 0) {
             return errorResponse(400, "No restaurants available to list.");
@@ -30,9 +33,10 @@ export const handler = async (event) => {
 
         const response = {
             restaurants: restaurantRows.map((restaurant) => ({
-                rid: restaurant.rid,
+                //rid: restaurant.rid,
                 name: restaurant.name,
-                active: restaurant.activated, 
+                address: restaurant.address,
+                //active: restaurant.activated === 1, 
             })),
         };
 
