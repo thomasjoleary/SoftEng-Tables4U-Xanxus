@@ -51,6 +51,7 @@ body {
     cursor: pointer;
     padding: 0;
     outline: none;
+    display:block;
 }
 
 .wide {
