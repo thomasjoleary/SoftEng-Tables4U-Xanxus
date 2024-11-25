@@ -11,10 +11,35 @@ const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/
 
 export default function Restaurant() {
   const [redraw, forceRedraw] = React.useState(0)
+  const [tables, setTables] = React.useState([
+    { number: 1, seats: 3 },
+    { number: 2, seats: 3 },
+    { number: 3, seats: 3 },
+  ])
   // use conditional for if activated vs unactivated???
   const [model, setModel] = React.useState(new Model("Manage Unactivated"))
   const router = useRouter()
 
+  const addTable = () => {
+    setTables((prevTables) => [
+      ...prevTables,
+      { number: prevTables.length + 1, seats: 3},
+    ])
+  }
+
+  const removeTable = () => {
+    setTables((prevTables) => prevTables.slice(0, prevTables.length - 1))
+  }
+
+  const updateSeats = (tableNumber: number, delta: number) => {
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.number === tableNumber
+          ? { ...table, seats: Math.max(table.seats + delta, 0) }
+          : table
+      )
+    )
+  }
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {
     forceRedraw(redraw + 1)
@@ -52,13 +77,44 @@ export default function Restaurant() {
   }
 
   function editRestaurant() {
+    const startHour = parseInt((document.getElementById("hours") as HTMLSelectElement).value)
+    const endHour = parseInt((document.getElementById("end-hours") as HTMLSelectElement).value)
 
-    // Add Lambda calls to edit restaurant here
+    if (startHour >= endHour) {
+      alert("Please select valid hours.")
+      return
+    }
 
-
-    // add something for a failed edit here:
-
-
+    const restaurantId = "1"
+    const tablesData = tables.map((table) => ({
+      tid: String(table.number),  
+      seats: String(table.seats), 
+    }))
+  
+    const requestBody = {
+      rid: restaurantId,
+      hours: {
+        open: String(startHour),
+        close: String(endHour), 
+      },
+      tables: tablesData,
+    }
+    const jsonData = JSON.stringify({ body: JSON.stringify(requestBody) })
+    axios
+      .post(`${gateway}editRestaurant`, jsonData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("Restaurant updated successfully:", response.data)
+        model.setPath("Edit Restaurant Success")
+        andRefreshDisplay()
+      })
+      .catch((error) => {
+        console.error("Error updating restaurant:", error)
+        alert("There was an error updating the restaurant. Please try again.")
+      })
     andRefreshDisplay()
   }
 
@@ -133,12 +189,101 @@ export default function Restaurant() {
 
       {/* For editing restaurant page */}
       {model.isPath("Edit Restaurant") ? (
-        <div className="container">
-          <p className="subheader">PLACEHOLDER UNTIL TIM FIXES JAVASCRIPT</p>
-
-          <button className="wide button" onClick={() => editRestaurant()}>Save Changes</button>
-          <button className="wide button" onClick={() => backToUnactivatedHome()}>Go Back</button>
+        //the <> here is required for some stupid reason, don't remove it
+        <><div className="container">
+          <h1>Tables4U</h1>
+          <h2>Editing (Restaurant Name)</h2>
+          <label htmlFor="hours">Hours</label>
+          <select id="hours" name="hours">
+            <option value="0">Time</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+          </select>
+          <span>to</span>
+          <select id="end-hours" name="end-hours">
+            <option value="24">Time</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+          </select>
         </div>
+        <div className="container">
+            <div className="table-container">
+              <div className="table-entries-wrapper">
+                {tables.map((table) => (
+                  <div key={table.number} className="table-entry">
+                    <label htmlFor={`table${table.number}`}>Table {table.number}</label>
+                    <input type="number" id={`table${table.number}`} value={table.seats} readOnly />
+                    <span>seats</span>
+                    <button
+                      className="table-plus"
+                      onClick={() => updateSeats(table.number, 1)}
+                    >
+                      +
+                    </button>
+                    <button
+                      className="table-minus"
+                      onClick={() => updateSeats(table.number, -1)}
+                    >
+                      -
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="button-container">
+              <div className="extra-buttons">
+                <button id="global-plus" onClick={addTable}>+</button>
+                <button id="global-minus" onClick={removeTable}>-</button>
+              </div>
+              <div className="main-buttons">
+                <button id="save-changes" onClick={editRestaurant}>Save Changes</button>
+                <button id="go-back" onClick={backToUnactivatedHome}>Go back</button>
+              </div>
+            </div>
+          </div></>
       ) : null}
 
       {/* For deleting inactive restaurant page */}

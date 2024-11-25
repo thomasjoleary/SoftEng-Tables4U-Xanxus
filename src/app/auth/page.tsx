@@ -34,16 +34,48 @@ export default function Login() {
   }
 
   function createRestaurant() {
+    console.log("Creating restaurant...");
+    const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/createRestaurant"
+    const nameInput = (document.querySelector('input[placeholder="(enter Restaurant Name)"]') as HTMLInputElement)?.value;
+    const addressInput = (document.querySelector('input[placeholder="(enter Restaurant Address)"]') as HTMLInputElement)?.value;
 
-    // Add Lambda calls to create restaurant here
+    if (!nameInput || !addressInput) {
+      alert("Please provide both a restaurant name and address.");
+      return;
+    }
 
+    const requestBody = {
+      body: JSON.stringify({
+        name: nameInput,
+        address: addressInput,
+      }),
+    };
 
     // add something for a failed creation here:
 
-
-    // on successful creation:
-    model.setPath("Successful Creation")
-    andRefreshDisplay()
+    axios.post(gateway, requestBody)
+    .then(response => {
+      console.log("API Response:", response); // Log the full response object
+      if (response.status === 200) {
+        if (response.data) {
+          const data = JSON.parse(response.data.body);
+          const restaurantId = data.rid
+          model.setLoginID(restaurantId)
+          model.setPath("Successful Creation");
+          andRefreshDisplay();
+        } else {
+          alert("No response data received.");
+          console.error("No data in response:", response);
+        }
+      } else {
+        alert("Failed to create restaurant. Please try again.");
+        console.error("Unexpected response:", response);
+      }
+    })
+    .catch(error => {
+      alert("An error occurred while creating the restaurant.");
+      console.error("Error creating restaurant:", error);
+    });
   }
 
   function backToLogin() {
@@ -83,20 +115,18 @@ export default function Login() {
           <div className="container">
             <p className="subtext">Create a Restaurant</p>
       
-            <form>
-                <input 
-                    type="text" 
-                    placeholder="(enter Restaurant Name)" 
-                    className="button"></input>
-                <br></br>
-                <input 
-                    type="text" 
-                    placeholder="(enter Restaurant Address)" 
-                    className="button"></input>
-                <br></br>
-                <button type="submit" className="wide button" onClick={() => createRestaurant()}>Create Restaurant</button>
-            </form>
-      
+            <input 
+                type="text" 
+                placeholder="(enter Restaurant Name)" 
+                className="button"></input>
+            <br></br>
+            <input 
+                type="text" 
+                placeholder="(enter Restaurant Address)" 
+                className="button"></input>
+            <br></br>
+            <button className="wide button" onClick={() => createRestaurant()}>Create Restaurant</button>
+            
             <p className="subtext">Already have a Restaurant?</p>
             <button className="button" onClick={() => backToLogin()}>Back to Login</button>
           </div>
@@ -108,7 +138,7 @@ export default function Login() {
           <div className="container">
               <button className="tables4u">Tables4U</button>
               <p className="subtext">Restaurant successfully created!</p>
-              <p className="subheader">123456</p>
+              <p className="subheader">{model.getLoginID()}</p>
               <p className="subtext">This is your only login credential. Write it down somewhere safe, and keep it secret!</p>
               <button className="wide button" onClick={() => backToLogin()}>Go to Login</button>
           </div>
