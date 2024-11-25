@@ -13,6 +13,9 @@ export default function Consumer() {
     const [redraw, forceRedraw] = React.useState(0)
     const [model, setModel] = React.useState(new Model("Consumer Home"))
     const router = useRouter()
+    const [restaurants, setRestaurants] = React.useState<{ name: string; address: string }[]>([]);
+    const [loading, setLoading] = React.useState(false);
+
 
     // helper function that forces React app to redraw whenever this is called.
     function andRefreshDisplay() {
@@ -26,16 +29,19 @@ export default function Consumer() {
     }
 
     function listAllRestaurants() {
-
-        // Add Lambda calls to list restaurant here
-
-
-        // add something for a failed list here:
-
-
-        // on successful listing:
-        model.setPath("Restaurants Successfully Listed")
-        andRefreshDisplay()
+        setLoading(true)
+        axios
+            .get(`${gateway}listActiveRestaurants`)
+            .then((response) => {
+                const parsedBody = JSON.parse(response.data.body)
+                setRestaurants(parsedBody.restaurants)
+            })
+            .catch((error) => {
+                console.error("Failed to fetch restaurants", error)
+            })
+            .finally(() => {
+                setLoading(false)
+            });
     }
 
     function backToConsumerHome() {
@@ -242,30 +248,36 @@ export default function Consumer() {
             {model.isPath("List Restaurants") ? (
                 <div className='container'>
                     <p className="subtext"> All Restaurants </p>
-                    <div className="container-list-cust">
-                        <table className="restaurantsTable">
-                            <thead>
-                                <tr>
-                                    <th>Restaurant Name</th>
-                                    <th>Address</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="restaurantRow">
-                                    <td>Restaurant A</td>
-                                    <td>123 St</td>
-                                </tr>
-                                <tr className="restaurantRow">
-                                    <td>Restaurant B</td>
-                                    <td>456 St</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
-
-            ) : null}
-        </body>
+                    {loading ? (
+                        <p>Loading restaurants...</p>
+                    ) : (
+                        <div className="container-list-cust">
+                            <table className="restaurantsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurant Name</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {restaurants.length > 0 ? (
+                                        restaurants.map((restaurant, row) => (
+                                            <tr className="restaurantRow" key={row}>
+                                                <td>{restaurant.name}</td>
+                                                <td>{restaurant.address}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={2}>No restaurants available</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>)}
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null
+            }
+        </body >
     )
 }

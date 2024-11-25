@@ -44,7 +44,7 @@ export default function Admin() {
 
   return (
     <body>
-      <button className="tables4u">Tables4U</button>
+      <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
 
       {/* For base admin listing page */}
       {model.isPath("Admin List Restaurants") ? (

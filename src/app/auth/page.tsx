@@ -54,7 +54,7 @@ export default function Login() {
   return (
   <body>
     <div className="container">
-        <button className="tables4u">Tables4U</button>
+        <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
         
 
         {/* For base login page */}
