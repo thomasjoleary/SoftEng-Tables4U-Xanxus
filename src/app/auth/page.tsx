@@ -48,6 +48,9 @@ export default function Login() {
     }
     //console.log(res)
 
+    // set rid to model for auth purposes later on
+    model.setRid(res.rid)
+
     if (res.admin === "yes") {
       // if admin
       router.push('/Admin')

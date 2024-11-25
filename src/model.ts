@@ -3,10 +3,12 @@ import { error } from 'console'
 
 export class Model {
     path : String
+    rid : String
 
     /** which is zero-based. */
     constructor(gpath : String) {
         this.path = gpath
+        this.rid = ""
     }
 
     isPath(givenPath : String) {
@@ -21,4 +23,7 @@ export class Model {
         return true
     }
 
+    setRid(givenRid : String) {
+        this.rid = givenRid
+    }
 }
