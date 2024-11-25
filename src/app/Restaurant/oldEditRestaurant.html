@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables4U</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button class="tables4u">Tables4U</button>
+        <h2 class="subheader">Editing (Restaurant name)</h2>
+
+        <div class="schedule-tables">
+            <div class="schedule">
+                <div class="day-row">
+                    <span>Schedule</span>
+                    <div class="hour-dropdown" data-day="Sunday"></div>
+                    <span>to</span>
+                    <div class="hour-dropdown" data-day="Sunday"></div>
+                </div>
+            </div>
+            <div class="tables-wrapper">
+                <div class="tables" id="tables-container">
+                </div>
+                <div class="add-remove-row">
+                    <button class="table-btn" id="add-table-btn">+</button>
+                    <button class="table-btn" id="remove-table-btn">-</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <button class="wide button">Save Changes</button><br><br>
+        <button class="wide button">Go back</button>
+    </div>
+    <script>
+        function createHourDropdown() {
+            const selectElement = document.createElement("select");
+            selectElement.classList.add("hour-select");
+            for (let i = 0; i <= 23; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                selectElement.appendChild(option);
+            }
+            return selectElement;
+        }
+        document.querySelectorAll('.hour-dropdown').forEach(function (dropdown) {
+            const hourDropdown = createHourDropdown();
+            dropdown.appendChild(hourDropdown);
+        });
+        document.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('table-btn')) {
+                const action = event.target.getAttribute('data-action');
+                const tableNumber = event.target.getAttribute('data-table');
+                const seatInput = document.querySelector(`.table-row:nth-child(${tableNumber}) .seat-input`);
+                let currentSeats = parseInt(seatInput.value);
+
+                if (action === 'increase' && currentSeats < 8) {
+                    seatInput.value = currentSeats + 1;
+                } else if (action === 'decrease' && currentSeats > 0) {
+                    seatInput.value = currentSeats - 1;
+                }
+            }
+        });
+        document.getElementById('add-table-btn').addEventListener('click', function() {
+            const tablesContainer = document.getElementById('tables-container');
+            const tableCount = tablesContainer.getElementsByClassName('table-row').length;
+            const newTableNumber = tableCount + 1;
+
+            const newTableRow = document.createElement('div');
+            newTableRow.classList.add('table-row');
+            newTableRow.innerHTML = `
+                <span>Table ${newTableNumber}</span>
+                <input type="number" value="3" class="seat-input" readonly> seats
+                <button class="table-btn" data-table="${newTableNumber}" data-action="increase">+</button>
+                <button class="table-btn" data-table="${newTableNumber}" data-action="decrease">-</button>
+            `;
+            tablesContainer.appendChild(newTableRow);
+            if (tablesContainer.getElementsByClassName('table-row').length > 10) {
+                tablesContainer.style.maxHeight = '400px';
+                tablesContainer.style.overflowY = 'auto'; 
+            }
+        });
+        document.getElementById('remove-table-btn').addEventListener('click', function() {
+            const tablesContainer = document.getElementById('tables-container');
+            const tableRows = tablesContainer.getElementsByClassName('table-row');
+            if (tableRows.length > 0) {
+                tablesContainer.removeChild(tableRows[tableRows.length - 1]);
+            }
+            if (tablesContainer.getElementsByClassName('table-row').length <= 10) {
+                tablesContainer.style.maxHeight = '';
+                tablesContainer.style.overflowY = '';
+            }
+        });
+    </script>
+</body>
+</html>
