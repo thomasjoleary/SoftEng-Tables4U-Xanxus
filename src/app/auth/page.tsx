@@ -12,6 +12,7 @@ const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/
 export default function Login() {
   const [redraw, forceRedraw] = React.useState(0)
   const [model, setModel] = React.useState(new Model("Login"))
+  const [riddata, setriddata] = React.useState("")
   const router = useRouter()
 
   // helper function that forces React app to redraw whenever this is called.
@@ -24,13 +25,40 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  function loginButton() {
+  async function loginButton ( event : React.MouseEvent ) {
+    event.preventDefault()
+    let res
+    //console.log(riddata)
+    try {
+      // send post request
+      const response = await axios.post(
 
+        gateway.concat("login"),
+  
+        {
+          body: {rid : riddata}
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+    //console.log(res)
+
+    // set rid to model for auth purposes later on
+    model.setRid(res.rid)
+
+    if (res.admin === "yes") {
+      // if admin
+      router.push('/Admin')
+    } else if (res.admin === "no") {
+      // if restaurant
+      router.push('/Restaurant')
+    }
     
-    // if restaurant
-    router.push('/Restaurant')
-    // if admin
-    router.push('/Admin')
   }
 
   function createRestaurant() {
@@ -98,10 +126,12 @@ export default function Login() {
               <input
                   type="text" 
                   placeholder="(enter Restaurant Code)" 
-                  className="button" >
+                  className="button"
+                  value={riddata}
+                  onChange={(e) => setriddata(e.target.value)}>
               </input>
               <br></br>
-              <button type="submit" className="wide button" onClick={() => loginButton()}>Log in</button>
+              <button type="submit" className="wide button" onClick={(e) => loginButton(e)}>Log in</button>
             </form>
 
             <p className="subtext">First time here?</p>
