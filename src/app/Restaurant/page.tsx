@@ -75,9 +75,12 @@ export default function Restaurant() {
     andRefreshDisplay()
   }
 
-  function activateRestaurant() {
+  function activateRestaurant() { // this is the function that will be called when the user clicks the "Activate Restaurant" button
 
     // Add Lambda calls to edit restaurant here
+
+    axios
+
 
 
     // add something for a failed activation here:
