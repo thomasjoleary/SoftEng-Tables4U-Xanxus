@@ -3,96 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tables4U</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Tables4U - Editing</title>
+    <link rel="stylesheet" href="styles2.css">
 </head>
 <body>
-    <div class="container">
-        <button class="tables4u">Tables4U</button>
-        <h2 class="subheader">Editing (Restaurant name)</h2>
 
-        <div class="schedule-tables">
-            <div class="schedule">
-                <div class="day-row">
-                    <span>Schedule</span>
-                    <div class="hour-dropdown" data-day="Sunday"></div>
-                    <span>to</span>
-                    <div class="hour-dropdown" data-day="Sunday"></div>
-                </div>
-            </div>
-            <div class="tables-wrapper">
-                <div class="tables" id="tables-container">
-                </div>
-                <div class="add-remove-row">
-                    <button class="table-btn" id="add-table-btn">+</button>
-                    <button class="table-btn" id="remove-table-btn">-</button>
-                </div>
+    <div class="container">
+        <h1>Tables4U</h1>
+        <h2>Editing (Restaurant Name)</h2>
+        <label for="hours">Hours</label>
+        <select id="hours" name="hours">
+            <option value="0">Time</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+        </select>
+        <span>to</span>
+        <select id="end-hours" name="end-hours">
+            <option value="24">Time</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+            <option value="21">21</option>
+            <option value="22">22</option>
+            <option value="23">23</option>
+            <option value="24">24</option>
+        </select>
+    </div>
+        <div class="container">
+            <div class="table-container">
+            <div class="table-entries-wrapper">
             </div>
         </div>
-        <br>
-        <button class="wide button">Save Changes</button><br><br>
-        <button class="wide button">Go back</button>
+        <div class="button-container">
+            <div class="extra-buttons">
+                <button id="global-plus">+</button>
+                <button id="global-minus">-</button>
+            </div>
+            <div class="main-buttons">
+                <button id="save-changes">Save Changes</button>
+                <button id="go-back">Go back</button>
+            </div>
+        </div>
     </div>
-    <script>
-        function createHourDropdown() {
-            const selectElement = document.createElement("select");
-            selectElement.classList.add("hour-select");
-            for (let i = 0; i <= 23; i++) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = i;
-                selectElement.appendChild(option);
-            }
-            return selectElement;
-        }
-        document.querySelectorAll('.hour-dropdown').forEach(function (dropdown) {
-            const hourDropdown = createHourDropdown();
-            dropdown.appendChild(hourDropdown);
-        });
-        document.addEventListener('click', function(event) {
-            if (event.target && event.target.classList.contains('table-btn')) {
-                const action = event.target.getAttribute('data-action');
-                const tableNumber = event.target.getAttribute('data-table');
-                const seatInput = document.querySelector(`.table-row:nth-child(${tableNumber}) .seat-input`);
-                let currentSeats = parseInt(seatInput.value);
 
-                if (action === 'increase' && currentSeats < 8) {
-                    seatInput.value = currentSeats + 1;
-                } else if (action === 'decrease' && currentSeats > 0) {
-                    seatInput.value = currentSeats - 1;
-                }
-            }
-        });
-        document.getElementById('add-table-btn').addEventListener('click', function() {
-            const tablesContainer = document.getElementById('tables-container');
-            const tableCount = tablesContainer.getElementsByClassName('table-row').length;
-            const newTableNumber = tableCount + 1;
-
-            const newTableRow = document.createElement('div');
-            newTableRow.classList.add('table-row');
-            newTableRow.innerHTML = `
-                <span>Table ${newTableNumber}</span>
-                <input type="number" value="3" class="seat-input" readonly> seats
-                <button class="table-btn" data-table="${newTableNumber}" data-action="increase">+</button>
-                <button class="table-btn" data-table="${newTableNumber}" data-action="decrease">-</button>
-            `;
-            tablesContainer.appendChild(newTableRow);
-            if (tablesContainer.getElementsByClassName('table-row').length > 10) {
-                tablesContainer.style.maxHeight = '400px';
-                tablesContainer.style.overflowY = 'auto'; 
-            }
-        });
-        document.getElementById('remove-table-btn').addEventListener('click', function() {
-            const tablesContainer = document.getElementById('tables-container');
-            const tableRows = tablesContainer.getElementsByClassName('table-row');
-            if (tableRows.length > 0) {
-                tablesContainer.removeChild(tableRows[tableRows.length - 1]);
-            }
-            if (tablesContainer.getElementsByClassName('table-row').length <= 10) {
-                tablesContainer.style.maxHeight = '';
-                tablesContainer.style.overflowY = '';
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
