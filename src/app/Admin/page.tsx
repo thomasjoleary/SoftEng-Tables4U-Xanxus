@@ -12,7 +12,8 @@ const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/
 export default function Admin() {
   const [redraw, forceRedraw] = React.useState(0)
   const [model, setModel] = React.useState(new Model("Admin List Restaurants"))
-  const [restaurants, setRestaurants] = React.useState<{ rid: String; name: string; address: string }[]>([]);
+  const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
+  const [selectedRID, setSelectedRID] = React.useState<string | null>(null)
   const router = useRouter()
 
   listRest()
@@ -22,17 +23,29 @@ export default function Admin() {
     forceRedraw(redraw + 1)
   }
 
-  function deleteRestPageClick() {
+  function deleteRestPageClick(rid: string) {
+    console.log("Selected restaurant ID for deletion:", rid)
+    setSelectedRID(rid)
     model.setPath("Admin Delete Restaurant")
     andRefreshDisplay()
   }
 
   function deleteRestaurantAdmin() {
+    if (!selectedRID) {
+      console.error("No selectedRID to delete")
+      return
+    }
+    console.log("Attempting to delete restaurant with ID:", selectedRID)
 
-    // Add Lambda calls to delete restaurant here
-
-
-    // add something for a failed deletion here:
+    //send post request
+    axios.post(`${gateway}deleteRestaurantAdmin`, { body: JSON.stringify({ rid: selectedRID }) }
+    )
+      .then(() => {
+        console.log("Restaurant deleted successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to delete restaurant", error)
+      })
 
 
     // on successful creation:
@@ -46,7 +59,7 @@ export default function Admin() {
   }
 
   async function listRest() {
-   
+
     let res
 
     try {
@@ -67,33 +80,35 @@ export default function Admin() {
 
   return (
     <body>
-      <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+      {/* <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button> */}
 
       {/* For base admin listing page */}
       {model.isPath("Admin List Restaurants") ? (
 
         <div className='container'>
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
           <p className="subheader"> Welcome, Admin!</p>
           <p className="subtext">List of Restaurants</p>
           <div className="container-list-admin">
             <table className="tableForAdminListRestaurants">
               <tbody>
-                  {restaurants.length > 0 ? (
-                      restaurants.map((restaurant, row) => (
-                          <tr className="restaurantRow" key={row}>
-                              <td>{restaurant.rid}</td>
-                              <td>{restaurant.name}</td>
-                              <td>{restaurant.address}</td>
-                              <td><button className="button cancelButton"> Cancel Reservation </button></td>
-                              <td><button className="button deleteButton" onClick={() => deleteRestPageClick()}> Delete </button></td>
-                              <td><button className="button utilizationButton"> Utilization</button></td>
-                          </tr>
-                      ))
-                  ) : (
-                      <tr>
-                          <td colSpan={2}>No restaurants available</td>
-                      </tr>
-                  )}
+                {restaurants.length > 0 ? (
+                  restaurants.map((restaurant, row) => (
+                    <tr className="restaurantRow" key={row}>
+                      <td>{restaurant.rid}</td>
+                      <td>{restaurant.name}</td>
+                      <td>{restaurant.address}</td>
+                      <td><button className="button cancelButton"> Cancel Reservation </button></td>
+                      <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
+                      <td><button className="button utilizationButton"> Utilization</button></td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2}>No restaurants available</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -105,7 +120,10 @@ export default function Admin() {
 
       {/* For admin deletion page */}
       {model.isPath("Admin Delete Restaurant") ? (
+
         <div className='container'>
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
           <body>
             <p className="subheader">Deleting Restaurant</p>
             <p className="subtext"> Are you sure you want to delete this restaurant? </p>
@@ -120,6 +138,8 @@ export default function Admin() {
       {/* For admin deletion success page */}
       {model.isPath("Successful Deletion") ? (
         <div className="container">
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
           <p className="subtext">Restaurant successfully deleted!</p>
           <button className="wide button" onClick={() => backToAdminList()}>Go to List of Restaurants</button>
         </div>
