@@ -5,12 +5,14 @@ import axios from 'axios'
 import './styles.css'
 import { create } from 'domain'
 import { Model } from '../../model'
+import { useRouter } from 'next/navigation'
 
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
 
 export default function Login() {
   const [redraw, forceRedraw] = React.useState(0)
   const [model, setModel] = React.useState(new Model("Login"))
+  const router = useRouter()
 
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {
@@ -20,6 +22,15 @@ export default function Login() {
   function createRestPageClick() {
     model.setPath("Create Restaurant")
     andRefreshDisplay()
+  }
+
+  function loginButton() {
+
+    
+    // if restaurant
+    router.push('/Restaurant')
+    // if admin
+    router.push('/Admin')
   }
 
   function createRestaurant() {
@@ -43,7 +54,7 @@ export default function Login() {
   return (
   <body>
     <div className="container">
-        <button className="tables4u">Tables4U</button>
+        <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
         
 
         {/* For base login page */}
@@ -58,7 +69,7 @@ export default function Login() {
                   className="button" >
               </input>
               <br></br>
-              <button type="submit" className="wide button">Log in</button>
+              <button type="submit" className="wide button" onClick={() => loginButton()}>Log in</button>
             </form>
 
             <p className="subtext">First time here?</p>
