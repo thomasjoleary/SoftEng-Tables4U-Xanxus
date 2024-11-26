@@ -13,8 +13,8 @@ export default function Consumer() {
     const [redraw, forceRedraw] = React.useState(0)
     const [model, setModel] = React.useState(new Model("Consumer Home"))
     const router = useRouter()
-    const [restaurants, setRestaurants] = React.useState<{ name: string; address: string }[]>([]);
-    const [loading, setLoading] = React.useState(false);
+    const [restaurants, setRestaurants] = React.useState<{ name: string; address: string }[]>([])
+    const [loading, setLoading] = React.useState(false)
 
 
     // helper function that forces React app to redraw whenever this is called.
@@ -36,7 +36,7 @@ export default function Consumer() {
             //parse the response and set it to the new array of restaurants
             .then((response) => {
                 const parsedBody = JSON.parse(response.data.body)
-                setRestaurants(parsedBody.restaurants)
+                setRestaurants(parsedBody.restaurants || [])
             })
             .catch((error) => {
                 console.error("Failed to fetch restaurants", error)
