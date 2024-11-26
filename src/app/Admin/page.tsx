@@ -15,6 +15,7 @@ export default function Admin() {
   const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
   const [selectedRID, setSelectedRID] = React.useState<string | null>(null)
   const router = useRouter()
+  //const [loading, setLoading] = React.useState(false)
 
   listRest()
 
@@ -69,7 +70,7 @@ export default function Admin() {
       )
       // set res to the body json, parsed
       res = JSON.parse(response.data.body)
-      setRestaurants(res.restaurants)
+      setRestaurants(res.restaurants || [])
     } catch (error) {
       console.log(error)
       return
