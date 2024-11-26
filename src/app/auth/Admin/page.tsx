@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import './styles.css'
 import { create } from 'domain'
-import { Model } from '../../model'
+import { Model } from '../../../model'
 import { useRouter } from 'next/navigation'
 
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
