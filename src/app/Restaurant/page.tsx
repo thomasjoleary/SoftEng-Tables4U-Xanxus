@@ -131,7 +131,33 @@ export default function Restaurant() {
   }
 
   async function deleteRestaurantManager() { //axious instance?
-   
+
+    console.log("Deleting Restaurant")
+    if (!selectedRID) {
+      console.error("No selectedRID to delete")
+      return
+    }
+    console.log("Attempting to delete restaurant with ID:", selectedRID)
+
+    //send post request
+    axios.post(`${gateway}deleteRestaurantManager`, { body: JSON.stringify({ rid: selectedRID }) }
+    )
+      .then(() => {
+        console.log("Restaurant deleted successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to delete restaurant", error)
+      })
+
+
+    // on successful creation:
+    model.setPath("Successful Deletion")
+    andRefreshDisplay()
+  }
+
+
+/*
+
     console.log("Deleting Restaurant")
 
     if (!selectedRID) { //if there's no RID then the delete function will not work
@@ -154,7 +180,11 @@ export default function Restaurant() {
 
       )
       // set res to the body json, parsed
-    
+    if (response.status === 200) {
+      console.log("Restaurant manager deleted successfully:", response.data);
+    } else {
+      console.error("Failed to delete restaurant manager:", response.data);
+    }
     } catch (error) {
       console.log(error)
       return
@@ -164,7 +194,7 @@ export default function Restaurant() {
    
     model.setPath("Successful Deletion from Manager")
     andRefreshDisplay()
-  }
+  }*/
 
   const activateRestaurant = async (restaurantId: string) => {
     setLoading(true);
