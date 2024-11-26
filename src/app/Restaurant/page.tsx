@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation'
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
 
 export default function Restaurant() {
+  const [selectedRID, setSelectedRID] = React.useState<string | null>(null)
+  const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
   const [redraw, forceRedraw] = React.useState(0)
   const [tables, setTables] = React.useState([
     { number: 1, seats: 3 },
@@ -50,12 +52,23 @@ export default function Restaurant() {
     andRefreshDisplay()
   }
 
-  function deleteRestManagerPageClickFromActive() {
+  function deleteRestManagerPageClickFromActive(rid: string) {
+    console.log("Selected restaurant ID for deletion:", rid)
+    setSelectedRID(rid)
     model.setPath("Delete Active Restaurant Manager")
     andRefreshDisplay()
   }
 
-  function deleteRestManagerPageClickFromInactive() {
+  function deleteRestPageClick(rid: string) {
+    console.log("Selected restaurant ID for deletion:", rid)
+    setSelectedRID(rid)
+    model.setPath("Admin Delete Restaurant")
+    andRefreshDisplay()
+  }
+
+  function deleteRestManagerPageClickFromInactive(rid: string) {
+    console.log("Selected restaurant ID for deletion:", rid)
+    setSelectedRID(rid)
     model.setPath("Delete Inactive Restaurant Manager")
     andRefreshDisplay()
   }
@@ -119,14 +132,25 @@ export default function Restaurant() {
   }
 
   function deleteRestaurantManager() {
+    if (!selectedRID) {
+      console.error("No selectedRID to delete")
+      return
+    }
+    console.log("Attempting to delete restaurant with ID:", selectedRID)
 
-    // Add Lambda calls to delete restaurant here
+    //send post request
+    axios.post(`${gateway}deleteRestaurantAdmin`, { body: JSON.stringify({ rid: selectedRID }) }
+    )
+      .then(() => {
+        console.log("Restaurant deleted successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to delete restaurant", error)
+      })
 
 
-    // add something for a failed delete here:
-
-
-    // on successful deletion:
+    // on successful creation:
+   
     model.setPath("Successful Deletion from Manager")
     andRefreshDisplay()
   }
@@ -157,7 +181,7 @@ export default function Restaurant() {
         <div className="container">
           <p className="subheader">Welcome, (Restaurant Name)</p>
           <button className="wide button" onClick={() => editRestPageClick()}>Edit Restaurant</button><br></br>
-          <button className="wide button" onClick={() => deleteRestManagerPageClickFromInactive()}>Delete Restaurant</button><br></br>
+          <button className="wide button" onClick={() => deleteRestManagerPageClickFromInactive("ec49b483-4870-4831-9868-97baba6e6da4")}>Delete Restaurant</button><br></br>
           <button className="bold wide button" onClick={() => activateRestPageClick()}>Activate Restaurant</button><br></br>
         </div>
       ) : null}
@@ -168,7 +192,7 @@ export default function Restaurant() {
           <p className="subheader">Welcome back, (Restaurant Name)</p>
           <button className="wide button">Show Availability</button>
           <button className="wide button">Manage Closed Days</button>
-          <button className="bold wide button" onClick={() => deleteRestManagerPageClickFromActive()}>Delete Restaurant</button>
+          <button className="bold wide button" onClick={() => deleteRestManagerPageClickFromActive("ec49b483-4870-4831-9868-97baba6e6da4")}>Delete Restaurant</button>
         </div>
       ) : null}
 
