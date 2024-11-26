@@ -7,9 +7,13 @@ import { create } from 'domain'
 import { Model } from '../../model'
 import { useRouter } from 'next/navigation'
 
+
 const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/"
 
 export default function Restaurant() {
+  const [selectedRID, setSelectedRID] = React.useState<string>('')
+  const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
+  const [loading, setLoading] = React.useState(false)
   const [redraw, forceRedraw] = React.useState(0)
   const [tables, setTables] = React.useState([
     { number: 1, seats: 3 },
@@ -50,28 +54,36 @@ export default function Restaurant() {
     andRefreshDisplay()
   }
 
-  function deleteRestManagerPageClickFromActive() {
+  function deleteRestManagerPageClickFromActive(rid: string) {
+    console.log("Selected restaurant ID for deletion:", rid)
+    setSelectedRID(rid)
     model.setPath("Delete Active Restaurant Manager")
     andRefreshDisplay()
   }
 
-  function deleteRestManagerPageClickFromInactive() {
-    model.setPath("Delete Inactive Restaurant Manager")
-    andRefreshDisplay()
-  }
+ 
+  function deleteRestManagerPageClickFromInactive(rid: string) {
+      console.log("Selected restaurant ID for deletion:", rid)
+      setSelectedRID(rid)
+      model.setPath("Delete Inactive Restaurant Manager")
+      andRefreshDisplay()
+    }
 
   function backToUnactivatedHome() {
+    console.log("back to unactivated home")
     model.setPath("Manage Unactivated")
     andRefreshDisplay()
   }
 
   function backToActivatedHome() {
+    console.log("back to activated home")
     model.setPath("Manage Activated")
     andRefreshDisplay()
   }
 
 
   function activateRestPageClick() {
+    console.log("activate restaurant")
     model.setPath("Activate Restaurant")
     andRefreshDisplay()
   }
@@ -118,43 +130,74 @@ export default function Restaurant() {
     andRefreshDisplay()
   }
 
-  function deleteRestaurantManager() {
+  async function deleteRestaurantManager() { //axious instance?
+   
+    console.log("Deleting Restaurant")
 
-    // Add Lambda calls to delete restaurant here
+    if (!selectedRID) { //if there's no RID then the delete function will not work
+      console.error("No selectedRID to delete")
+      return
+    }
 
+    console.log("Attempting to delete restaurant with ID:", selectedRID) //log the selected RID that is being deleted
 
-    // add something for a failed delete here:
+    //send post request
+    try {
+      // send post request
+      const response = await axios.post(
 
+        gateway.concat("deleteRestaurantManager"),
+  
+        {
+          body: {rid : selectedRID}
+        }
 
-    // on successful deletion:
+      )
+      // set res to the body json, parsed
+    
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    // on successful creation:
+   
     model.setPath("Successful Deletion from Manager")
     andRefreshDisplay()
   }
 
-  function activateRestaurant() {
+  const activateRestaurant = async (restaurantId: string) => {
+    setLoading(true);
+    console.log("trying to activate restaurant")
+    try {
+      const response = await axios.post(`${gateway}activateRestaurantManager`, {
+        restaurantId: restaurantId
+      });
+      console.log(`Restaurant with ID ${restaurantId} has been activated.`);
+      // Add any additional logic needed after activation, e.g., redirecting the user
+    } catch (error) {
+      console.error(`Failed to activate restaurant with ID ${restaurantId}:`, error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Add Lambda calls to edit restaurant here
-
-
-    // add something for a failed activation here:
-
-
-    // on successful activation:
-    model.setPath("Successful Activation")
-    andRefreshDisplay()
-  }
-
+  // Example restaurant ID, replace with actual ID from your data
+  const restaurantId = "example-restaurant-id";
 
   return (
     <body>
       <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+
+      
 
       {/* For unactivated restaurant page */}
       {model.isPath("Manage Unactivated") ? (
         <div className="container">
           <p className="subheader">Welcome, (Restaurant Name)</p>
           <button className="wide button" onClick={() => editRestPageClick()}>Edit Restaurant</button><br></br>
-          <button className="wide button" onClick={() => deleteRestManagerPageClickFromInactive()}>Delete Restaurant</button><br></br>
+          <button className="wide button" onClick={() => deleteRestManagerPageClickFromInactive(selectedRID)}>Delete Restaurant</button><br></br>
           <button className="bold wide button" onClick={() => activateRestPageClick()}>Activate Restaurant</button><br></br>
         </div>
       ) : null}
@@ -165,16 +208,16 @@ export default function Restaurant() {
           <p className="subheader">Welcome back, (Restaurant Name)</p>
           <button className="wide button">Show Availability</button>
           <button className="wide button">Manage Closed Days</button>
-          <button className="bold wide button" onClick={() => deleteRestManagerPageClickFromActive()}>Delete Restaurant</button>
+          <button className="bold wide button" onClick={() => deleteRestManagerPageClickFromActive(selectedRID)}>Delete Restaurant</button>
         </div>
       ) : null}
 
-      {/* for activating restuarant */}
+      {/* for activating restaurant */}
       {model.isPath("Activate Restaurant") ? (
         <div className="container">
-          <p className="subheader">Are you sure you want to activate(Restaurant Name)?</p>
-          <p className="subtext">Once you activate your restaraunt, you will not be able to un-activate it, or edit your schedule.</p>
-          <button className="bold wide button" onClick={() => activateRestaurant()}>Activate Restaurant</button>
+          <p className="subheader">Are you sure you want to activate (Restaurant Name)?</p>
+          <p className="subtext">Once you activate your restaurant, you will not be able to un-activate it, or edit your schedule.</p>
+          <button className="bold wide button" onClick={() => activateRestaurant("db3022e4-320a-4550-b91f-0fb64a0c859a")}>Activate Restaurant</button>
           <button className="wide button" onClick={() => backToUnactivatedHome()}>Go Back</button>
         </div>
       ) : null}
@@ -287,7 +330,7 @@ export default function Restaurant() {
       ) : null}
 
       {/* For deleting inactive restaurant page */}
-      {model.isPath("Delete Inactive Restaurant Manager") ? (
+      {model.isPath("Delete Inactive Restaurant Manager") ? ( 
         <div className="container">
           <p className="subheader">Are you sure you want to delete the inactive (Restaurant Name)?</p>
           <p className="subheader">This action cannot be undone</p>
@@ -296,8 +339,8 @@ export default function Restaurant() {
         </div>
       ) : null}
 
-      {/* For deleting active restaurant page */}
-      {model.isPath("Delete Active Restaurant Manager") ? (
+      {/* For deleting active restaurant page */} 
+      {model.isPath("Delete Active Restaurant Manager") ? ( 
         <div className="container">
           <p className="subheader">Are you sure you want to delete the active (Restaurant Name)?</p>
           <p className="subheader">This action cannot be undone</p>
