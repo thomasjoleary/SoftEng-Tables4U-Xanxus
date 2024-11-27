@@ -16,6 +16,7 @@ export default function Login() {
   const router = useRouter()
   const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
   const [loading, setLoading] = React.useState(false)
+  const [restName, setRestName] = React.useState("")
   const [tables, setTables] = React.useState([
     { number: 1, seats: 3 },
     { number: 2, seats: 3 },
@@ -113,6 +114,8 @@ export default function Login() {
 
     // set rid to model for auth purposes later on
     model.setRid(res.rid)
+
+    setRestName(res.name)
 
     if (res.admin === "yes") {
       // if admin
@@ -366,7 +369,7 @@ export default function Login() {
           {/* For unactivated restaurant page */}
       {model.isPath("Manage Unactivated") ? (
         <div className="container">
-          <p className="subheader">Welcome, (Restaurant Name)</p>
+          <p className="subheader">Welcome, {restName}</p>
           <button className="wide button" onClick={() => editRestPageClick()}>Edit Restaurant</button><br></br>
           <button className="wide button" onClick={() => deleteRestManagerPageClickFromInactive()}>Delete Restaurant</button><br></br>
           <button className="bold wide button" onClick={() => activateRestPageClick()}>Activate Restaurant</button><br></br>
@@ -376,7 +379,7 @@ export default function Login() {
       {/* For activated restaurant page */}
       {model.isPath("Manage Activated") ? (
         <div className="container">
-          <p className="subheader">Welcome back, (Restaurant Name)</p>
+          <p className="subheader">Welcome back, {restName}</p>
           <button className="wide button">Show Availability</button>
           <button className="wide button">Manage Closed Days</button>
           <button className="bold wide button" onClick={() => deleteRestManagerPageClickFromActive()}>Delete Restaurant</button>
