@@ -91,22 +91,24 @@ export default function Login() {
 
   function activateRestaurant() {
 
-    // Add Lambda calls to edit restaurant here
+    if (!riddata) {
+      console.error("No riddata to delete")
+      return
+    }
+    console.log("Attempting to activate restaurant with ID:", riddata)
 
-
-    // add something for a failed activation here:
-
-
-    // on successful activation:
+    //send post request
+    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata }) } 
+    )
+      .then(() => {
+        console.log("Restaurant activated successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to activate restaurant", error)
+      })
     model.setPath("Successful Activation")
     andRefreshDisplay()
   }
-
-
-
-
-
-
 
 
   async function listRest() {
