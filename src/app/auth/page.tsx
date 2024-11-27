@@ -1,4 +1,4 @@
-'use client'                              // directive to clarify client-side. Place at top of ALL .tsx files
+'use client' // directive to clarify client-side. Place at top of ALL .tsx files
 import React from 'react'
 import axios from 'axios'
 
@@ -17,7 +17,7 @@ export default function Login() {
   const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string; active: number }[]>([])
   const [loading, setLoading] = React.useState(false)
   const [restName, setRestName] = React.useState("")
-  const [tables, setTables] = React.useState([])
+  const [tables, setTables] = React.useState<{ number: number; seats: number}[]>([])
   const [openingTime, setOpeningTime] = React.useState(0)
   const [closingTime, setClosingTime] = React.useState(24)
 
@@ -133,13 +133,13 @@ export default function Login() {
   }
 
   function createRestaurant() {
-    console.log("Creating restaurant...");
-    const nameInput = (document.querySelector('input[placeholder="(enter Restaurant Name)"]') as HTMLInputElement)?.value;
-    const addressInput = (document.querySelector('input[placeholder="(enter Restaurant Address)"]') as HTMLInputElement)?.value;
+    console.log("Creating restaurant...")
+    const nameInput = (document.querySelector('input[placeholder="(enter Restaurant Name)"]') as HTMLInputElement)?.value
+    const addressInput = (document.querySelector('input[placeholder="(enter Restaurant Address)"]') as HTMLInputElement)?.value
 
     if (!nameInput || !addressInput) {
-      alert("Please provide both a restaurant name and address.");
-      return;
+      alert("Please provide both a restaurant name and address.")
+      return
     }
 
     const requestBody = {
@@ -147,32 +147,32 @@ export default function Login() {
         name: nameInput,
         address: addressInput,
       }),
-    };
+    }
 
     // add something for a failed creation here:
 
     axios.post(`${gateway}createRestaurant`, requestBody)
     .then(response => {
-      console.log("API Response:", response); // Log the full response object
+      console.log("API Response:", response)
       if (response.status === 200) {
         if (response.data) {
-          const data = JSON.parse(response.data.body);
+          const data = JSON.parse(response.data.body)
           const restaurantId = data.rid
           model.setLoginID(restaurantId)
-          model.setPath("Successful Creation");
-          andRefreshDisplay();
+          model.setPath("Successful Creation")
+          andRefreshDisplay()
         } else {
-          alert("No response data received.");
-          console.error("No data in response:", response);
+          alert("No response data received.")
+          console.error("No data in response:", response)
         }
       } else {
-        alert("Failed to create restaurant. Please try again.");
-        console.error("Unexpected response:", response);
+        alert("Failed to create restaurant. Please try again.")
+        console.error("Unexpected response:", response)
       }
     })
     .catch(error => {
-      alert("An error occurred while creating the restaurant.");
-      console.error("Error creating restaurant:", error);
+      alert("An error occurred while creating the restaurant.")
+      console.error("Error creating restaurant:", error)
     })
   }
 
@@ -190,7 +190,7 @@ export default function Login() {
     axios.post(`${gateway}getRestaurantInformation`, { body: JSON.stringify({ rid: riddata }) })
       .then(response => {
         console.log("updateCurrentSettings() got a return")
-        console.log("API Response:", response); // Log the full response object
+        console.log("API Response:", response)
         if (response.status === 200) {
           if (response.data) {
             const data = JSON.parse(response.data.body)
@@ -201,22 +201,22 @@ export default function Login() {
             const tables = data.tables.map((table: { tid: string; seats: number }) => ({
               number: table.tid,
               seats: table.seats,
-            }));
-            setTables(tables);
+            }))
+            setTables(tables)
           }
           else {
-            alert("No response data received.");
+            alert("No response data received.")
             console.error("No data in response:", response)
           }
         } 
         else {
-          alert("Failed to create restaurant. Please try again.");
+          alert("Failed to create restaurant. Please try again.")
           console.error("Unexpected response:", response)
         }
       })
       .catch(error => {
-        alert("An error occurred while updating the restaurant.");
-        console.error("Error updating restaurant:", error);
+        alert("An error occurred while updating the restaurant.")
+        console.error("Error updating restaurant:", error)
       })
 
     model.setPath("Edit Restaurant")
@@ -282,7 +282,7 @@ export default function Login() {
       })
       .then((response) => {
         console.log("Restaurant updated successfully:", response.data)
-        model.setPath("Edit Restaurant Success")
+        alert("Restaurant updated successfully")
         andRefreshDisplay()
       })
       .catch((error) => {
@@ -337,11 +337,11 @@ export default function Login() {
   }
 
   const handleOpenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setOpeningTime(event.target.value)
+    setOpeningTime(Number(event.target.value))
   }
 
   const handleCloseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setClosingTime(event.target.value)
+    setClosingTime(Number(event.target.value))
   }
 
   return (
@@ -349,8 +349,6 @@ export default function Login() {
     <div className="container">
         <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
         
-
-        {/* For base login page */}
         { model.isPath("Login") ? (
           <div className="container">
             <p className="subtext">Welcome Restaurant Owner</p>
@@ -372,8 +370,6 @@ export default function Login() {
           </div>
           ) : null }
 
-
-          {/* For create restaurant page */}
         { model.isPath("Create Restaurant") ? (
           <div className="container">
             <p className="subtext">Create a Restaurant</p>
@@ -395,7 +391,6 @@ export default function Login() {
           </div>
           ) : null }
 
-          {/* For successful creation page */}
         { model.isPath("Successful Creation") ? (
           
           <div className="container">
@@ -408,8 +403,6 @@ export default function Login() {
           
           ) : null }
 
-
-          {/* For unactivated restaurant page */}
       {model.isPath("Manage Unactivated") ? (
         <div className="container">
           <p className="subheader">Welcome, {restName}</p>
@@ -419,7 +412,6 @@ export default function Login() {
         </div>
       ) : null}
 
-      {/* For activated restaurant page */}
       {model.isPath("Manage Activated") ? (
         <div className="container">
           <p className="subheader">Welcome back, {restName}</p>
@@ -429,7 +421,6 @@ export default function Login() {
         </div>
       ) : null}
 
-      {/* for activating restuarant */}
       {model.isPath("Activate Restaurant") ? (
         <div className="container">
           <p className="subheader">Are you sure you want to activate(Restaurant Name)?</p>
@@ -439,7 +430,6 @@ export default function Login() {
         </div>
       ) : null}
 
-      {/* for successfully activating restuarant */}
       {model.isPath("Successful Activation") ? (
         <div className="container">
           <p className="subtext">Restaurant successfully activated!</p>
@@ -447,7 +437,6 @@ export default function Login() {
         </div>
       ) : null}
 
-      {/* For editing restaurant page */}
       {model.isPath("Edit Restaurant") ? (
         //the <> here is required for some stupid reason, don't remove it
         <><div className="container">
@@ -456,6 +445,7 @@ export default function Login() {
           <label htmlFor="hours">Hours</label>
           <select id="hours" name="hours" value={openingTime} onChange={handleOpenChange}>
             <option value="0">Time</option>
+            <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -546,7 +536,6 @@ export default function Login() {
           </div></>
       ) : null}
 
-      {/* For deleting inactive restaurant page */}
       {model.isPath("Delete Inactive Restaurant Manager") ? (
         <div className="container">
           <p className="subheader">Are you sure you want to delete the inactive (Restaurant Name)?</p>
@@ -556,7 +545,6 @@ export default function Login() {
         </div>
       ) : null}
 
-      {/* For deleting active restaurant page */}
       {model.isPath("Delete Active Restaurant Manager") ? (
         <div className="container">
           <p className="subheader">Are you sure you want to delete the active (Restaurant Name)?</p>
@@ -566,15 +554,12 @@ export default function Login() {
         </div>
       ) : null}
 
-      {/* For successful deletion of restaurant page */}
       {model.isPath("Successful Deletion from Manager") ? (
         <div className="container">
           <p className="subtext">Restaurant successfully deleted!</p>
-          {/* WHERE TO RE-ROUTE THEM NOW???? */}
         </div>
       ) : null}
 
-          {/* For base admin listing page */}
         {model.isPath("Admin List Restaurants") ? (
 
           <div className='container'>
@@ -613,7 +598,6 @@ export default function Login() {
           </div>
         ) : null}
 
-        {/* For admin deletion page */}
         {model.isPath("Admin Delete Restaurant") ? (
 
           <div className='container'>
@@ -630,7 +614,6 @@ export default function Login() {
 
         ) : null}
 
-        {/* For admin deletion success page */}
         {model.isPath("Successful Deletion") ? (
           <div className="container">
             <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
