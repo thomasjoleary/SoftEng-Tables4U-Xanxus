@@ -124,7 +124,11 @@ export default function Login() {
       andRefreshDisplay()
     } else if (res.admin === "no") {
       // if restaurant
-      model.setPath("Manage Unactivated")
+      if (res.active === 1) {
+        model.setPath("Manage Activated")
+      } else {
+        model.setPath("Manage Unactivated")
+      }
       andRefreshDisplay()
     }
     
@@ -299,7 +303,6 @@ export default function Login() {
       )
     )
   }
-
 
   return (
 
