@@ -93,13 +93,16 @@ export default function Login() {
 
     if (!riddata) {
       console.error("No riddata to delete")
+      console.error("No riddata to delete")
       return
     }
     console.log("Attempting to activate restaurant with ID:", riddata)
 
     //send post request
-    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata }) } 
+    axios.post(`${gateway}getRestaurantInformation`, { body: JSON.stringify({ rid: riddata }) } 
+    
     )
+    
       .then(() => {
         console.log("Restaurant activated successfully.")
       })
