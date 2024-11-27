@@ -134,7 +134,6 @@ export default function Login() {
 
   function createRestaurant() {
     console.log("Creating restaurant...");
-    const gateway = "https://7yv9xzfvp8.execute-api.us-east-2.amazonaws.com/Initial/createRestaurant"
     const nameInput = (document.querySelector('input[placeholder="(enter Restaurant Name)"]') as HTMLInputElement)?.value;
     const addressInput = (document.querySelector('input[placeholder="(enter Restaurant Address)"]') as HTMLInputElement)?.value;
 
@@ -152,7 +151,7 @@ export default function Login() {
 
     // add something for a failed creation here:
 
-    axios.post(gateway, requestBody)
+    axios.post(`${gateway}createRestaurant`, requestBody)
     .then(response => {
       console.log("API Response:", response); // Log the full response object
       if (response.status === 200) {
@@ -174,7 +173,7 @@ export default function Login() {
     .catch(error => {
       alert("An error occurred while creating the restaurant.");
       console.error("Error creating restaurant:", error);
-    });
+    })
   }
 
   function backToLogin() {
@@ -183,14 +182,47 @@ export default function Login() {
   }
 
   function editRestPageClick() {
-    model.setPath("Edit Restaurant")
-    updateCurrentSettings
-    andRefreshDisplay()
+    updateCurrentSettings()
   }
 
   function updateCurrentSettings() {
+    console.log("updateCurrentSettings() called")
+    axios.post(`${gateway}getRestaurantInformation`, { body: JSON.stringify({ rid: riddata }) })
+      .then(response => {
+        console.log("updateCurrentSettings() got a return")
+        console.log("API Response:", response); // Log the full response object
+        if (response.status === 200) {
+          if (response.data) {
+            const data = JSON.parse(response.data.body)
+            const openingTime= data.openingTime
+            setOpeningTime(openingTime)
+            const closingTime= data.closingTime
+            setClosingTime(closingTime)
+            const tables = data.tables.map((table: { tid: string; seats: number }) => ({
+              number: table.tid,
+              seats: table.seats,
+            }));
+            setTables(tables);
+          }
+          else {
+            alert("No response data received.");
+            console.error("No data in response:", response)
+          }
+        } 
+        else {
+          alert("Failed to create restaurant. Please try again.");
+          console.error("Unexpected response:", response)
+        }
+      })
+      .catch(error => {
+        alert("An error occurred while updating the restaurant.");
+        console.error("Error updating restaurant:", error);
+      })
 
+    model.setPath("Edit Restaurant")
+    andRefreshDisplay()
   }
+
 
   function deleteRestManagerPageClickFromActive() {
     model.setPath("Delete Active Restaurant Manager")
@@ -288,8 +320,7 @@ export default function Login() {
 
   const addTable = () => {
     setTables((prevTables) => [
-      ...prevTables,
-      { number: prevTables.length + 1, seats: 3},
+      ...prevTables, { number: prevTables.length + 1, seats: 3},
     ])
   }
 
@@ -300,9 +331,7 @@ export default function Login() {
   const updateSeats = (tableNumber: number, delta: number) => {
     setTables((prevTables) =>
       prevTables.map((table) =>
-        table.number === tableNumber
-          ? { ...table, seats: Math.max(table.seats + delta, 0) }
-          : table
+        table.number === tableNumber ? { ...table, seats: Math.max(table.seats + delta, 0) } : table
       )
     )
   }
@@ -423,7 +452,7 @@ export default function Login() {
         //the <> here is required for some stupid reason, don't remove it
         <><div className="container">
           <h1>Tables4U</h1>
-          <h2>Editing (Restaurant Name)</h2>
+          <h2>Editing {restName}</h2>
           <label htmlFor="hours">Hours</label>
           <select id="hours" name="hours" value={openingTime} onChange={handleOpenChange}>
             <option value="0">Time</option>
