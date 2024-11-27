@@ -43,7 +43,7 @@ export default function Login() {
     console.log("Attempting to delete restaurant with ID:", riddata)
 
     //send post request
-    axios.post(`${gateway}deleteRestaurantAdmin`, { body: JSON.stringify({ rid: riddata }) }
+    axios.post(`${gateway}deleteRestaurantAdmin`, { body: JSON.stringify({ rid: riddata }) } 
     )
       .then(() => {
         console.log("Restaurant deleted successfully.")
@@ -62,6 +62,52 @@ export default function Login() {
     model.setPath("Admin List Restaurants")
     andRefreshDisplay()
   }
+
+  function deleteRestaurantManager() {
+
+    //for now there's no real difference between deleting a restaurant as an admin or as a manager
+    //they're just separated in the UI
+    //two seperate lambdas though, just called the same way
+
+    if (!riddata) {
+      console.error("No riddata to delete")
+      return
+    }
+    console.log("Attempting to delete restaurant with ID:", riddata)
+
+    //send post request
+    axios.post(`${gateway}deleteRestaurantManager`, { body: JSON.stringify({ rid: riddata }) } //deleteRestaurantManager is identical to deleteRestaurantAdmin
+    )
+      .then(() => {
+        console.log("Restaurant deleted successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to delete restaurant", error)
+      })
+
+    model.setPath("Successful Deletion from Manager")
+    andRefreshDisplay()
+  }
+
+  function activateRestaurant() {
+
+    // Add Lambda calls to edit restaurant here
+
+
+    // add something for a failed activation here:
+
+
+    // on successful activation:
+    model.setPath("Successful Activation")
+    andRefreshDisplay()
+  }
+
+
+
+
+
+
+
 
   async function listRest() {
 
@@ -253,32 +299,7 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  function deleteRestaurantManager() {
-
-    // Add Lambda calls to delete restaurant here
-
-
-    // add something for a failed delete here:
-
-
-    // on successful deletion:
-    model.setPath("Successful Deletion from Manager")
-    andRefreshDisplay()
-  }
-
-  function activateRestaurant() {
-
-    // Add Lambda calls to edit restaurant here
-
-
-    // add something for a failed activation here:
-
-
-    // on successful activation:
-    model.setPath("Successful Activation")
-    andRefreshDisplay()
-  }
-
+  
   const addTable = () => {
     setTables((prevTables) => [
       ...prevTables,
