@@ -33,7 +33,8 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  function deleteRestaurantAdmin() {
+  async function deleteRestaurantAdmin( event : React.MouseEvent ) {
+    event.preventDefault()
     if (!riddata) {
       console.error("No riddata to delete")
       return
@@ -41,7 +42,7 @@ export default function Login() {
     console.log("Attempting to delete restaurant with ID:", riddata)
 
     //send post request
-    axios.post(`${gateway}deleteRestaurantAdmin`, { body: JSON.stringify({ rid: riddata }) } 
+    await axios.post(`${gateway}deleteRestaurantAdmin`, { body: JSON.stringify({ rid: riddata }) } 
     )
       .then(() => {
         console.log("Restaurant deleted successfully.")
@@ -50,14 +51,13 @@ export default function Login() {
         console.error("Failed to delete restaurant", error)
       })
 
-
-    // on successful creation:
-    model.setPath("Successful Deletion")
-    andRefreshDisplay()
+    // on successful deletion:
+    backToAdminList()
   }
 
   function backToAdminList() {
     model.setPath("Admin List Restaurants")
+    listRest()
     andRefreshDisplay()
   }
 
@@ -159,7 +159,9 @@ export default function Login() {
       console.log(error)
       return
     }
-    //console.log(res)
+    if (!res.rid) {
+      alert(res.error)
+    }
 
     // set rid to model for auth purposes later on
     model.setRid(res.rid)
@@ -629,13 +631,13 @@ export default function Login() {
           <div className='container'>
             <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
 
-            <body>
+            
               <p className="subheader">Deleting Restaurant</p>
               <p className="subtext"> Are you sure you want to delete this restaurant? </p>
               <p className="subtext"> This action cannot be undone.</p>
-              <button className="button" onClick={() => deleteRestaurantAdmin()}> Yes</button>
+              <button className="button" onClick={(e) => deleteRestaurantAdmin(e)}> Yes</button>
               <button className="button" onClick={() => backToAdminList()}> No </button>
-            </body>
+            
           </div>
 
         ) : null}
