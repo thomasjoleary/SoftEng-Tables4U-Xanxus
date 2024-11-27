@@ -14,7 +14,7 @@ export default function Login() {
   const [model, setModel] = React.useState(new Model("Login"))
   const [riddata, setriddata] = React.useState("")
   const router = useRouter()
-  const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
+  const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string; active: number }[]>([])
   const [loading, setLoading] = React.useState(false)
   const [restName, setRestName] = React.useState("")
   const [tables, setTables] = React.useState([
@@ -548,6 +548,9 @@ export default function Login() {
                         <td>{restaurant.rid}</td>
                         <td>{restaurant.name}</td>
                         <td>{restaurant.address}</td>
+                        {(restaurant.active === 0) ? (
+                          <td>Inactive</td>
+                        ): <td>Active</td>}
                         <td><button className="button cancelButton"> Cancel Reservation </button></td>
                         <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
                         <td><button className="button utilizationButton"> Utilization</button></td>
