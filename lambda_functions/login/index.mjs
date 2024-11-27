@@ -33,6 +33,7 @@ export const handler = async (event) => {
             admin = "yes"
             success = "true"
             const active = "true"
+            const name = "admin login"
             return {
                 statusCode: 200,
                 body: JSON.stringify({
@@ -40,6 +41,7 @@ export const handler = async (event) => {
                     success,
                     admin,
                     active,
+                    name,
                 }),
             }
         }
@@ -67,6 +69,7 @@ export const handler = async (event) => {
         }
 
         const active = restRow[0].activated
+        const name = restRow[0].name
         await connection.end();
         console.log("Database operation complete");
 
@@ -78,6 +81,7 @@ export const handler = async (event) => {
                 success,
                 admin,
                 active,
+                name,
             }),
         };
     } catch (error) {
