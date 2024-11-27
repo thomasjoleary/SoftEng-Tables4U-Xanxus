@@ -1,6 +1,6 @@
 {
-  "name": "wordfold",
-  "version": "0.1.0",
+  "name": "Tables4U",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
