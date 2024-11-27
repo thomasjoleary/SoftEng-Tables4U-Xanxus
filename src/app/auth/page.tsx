@@ -97,7 +97,7 @@ export default function Login() {
     console.log("Attempting to activate restaurant with ID:", riddata)
 
     //send post request
-    axios.post(`${gateway}getRestaurantInformation`, { body: JSON.stringify({ rid: riddata }) } 
+    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata }) } 
     
     )
     
