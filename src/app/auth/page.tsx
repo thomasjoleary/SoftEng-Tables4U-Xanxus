@@ -17,11 +17,9 @@ export default function Login() {
   const [restaurants, setRestaurants] = React.useState<{ rid: string; name: string; address: string }[]>([])
   const [loading, setLoading] = React.useState(false)
   const [restName, setRestName] = React.useState("")
-  const [tables, setTables] = React.useState([
-    { number: 1, seats: 3 },
-    { number: 2, seats: 3 },
-    { number: 3, seats: 3 },
-  ])
+  const [tables, setTables] = React.useState([])
+  const [openingTime, setOpeningTime] = React.useState(0)
+  const [closingTime, setClosingTime] = React.useState(24)
 
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {
@@ -182,7 +180,12 @@ export default function Login() {
 
   function editRestPageClick() {
     model.setPath("Edit Restaurant")
+    updateCurrentSettings
     andRefreshDisplay()
+  }
+
+  function updateCurrentSettings() {
+
   }
 
   function deleteRestManagerPageClickFromActive() {
@@ -220,7 +223,7 @@ export default function Login() {
       return
     }
 
-    const restaurantId = "1"
+    const restaurantId = riddata
     const tablesData = tables.map((table) => ({
       tid: String(table.number),  
       seats: String(table.seats), 
@@ -300,6 +303,13 @@ export default function Login() {
     )
   }
 
+  const handleOpenChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setOpeningTime(event.target.value)
+  }
+
+  const handleCloseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setClosingTime(event.target.value)
+  }
 
   return (
 
@@ -411,7 +421,7 @@ export default function Login() {
           <h1>Tables4U</h1>
           <h2>Editing (Restaurant Name)</h2>
           <label htmlFor="hours">Hours</label>
-          <select id="hours" name="hours">
+          <select id="hours" name="hours" value={openingTime} onChange={handleOpenChange}>
             <option value="0">Time</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -438,7 +448,7 @@ export default function Login() {
             <option value="23">23</option>
           </select>
           <span>to</span>
-          <select id="end-hours" name="end-hours">
+          <select id="end-hours" name="end-hours" value={closingTime} onChange={handleCloseChange}>
             <option value="24">Time</option>
             <option value="1">1</option>
             <option value="2">2</option>
