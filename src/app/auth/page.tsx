@@ -61,6 +61,69 @@ export default function Login() {
     andRefreshDisplay()
   }
 
+  function deleteRestaurantManager() {
+
+    //for now there's no real difference between deleting a restaurant as an admin or as a manager
+    //they're just separated in the UI
+    //two seperate lambdas though, just called the same way
+
+    if (!riddata) {
+      console.error("No riddata to delete")
+      return
+    }
+    console.log("Attempting to delete restaurant with ID:", riddata)
+
+    //send post request
+    axios.post(`${gateway}deleteRestaurantManager`, { body: JSON.stringify({ rid: riddata }) } //deleteRestaurantManager is identical to deleteRestaurantAdmin
+    )
+      .then(() => {
+        console.log("Restaurant deleted successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to delete restaurant", error)
+      })
+
+    model.setPath("Successful Deletion from Manager")
+    andRefreshDisplay()
+  }
+
+  async function activateRestaurant() { //this function delivers a bad request according to network page as of 2:48am 11/27/2024
+
+    if (!riddata) {
+      console.error("No riddata")
+      return
+    }
+    console.log("Attempting to activate restaurant with ID:", riddata)
+
+
+    //send post request
+
+    let res
+
+
+    try {
+      // send post request
+      const response = await axios.post(
+
+        gateway.concat("activateRestaurant"),
+
+        {
+          body: {rid : riddata}
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+    model.setPath("Successful Activation")
+    andRefreshDisplay()
+  }
+
+
   async function listRest() {
 
     let res
@@ -292,32 +355,6 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  function deleteRestaurantManager() {
-
-    // Add Lambda calls to delete restaurant here
-
-
-    // add something for a failed delete here:
-
-
-    // on successful deletion:
-    model.setPath("Successful Deletion from Manager")
-    andRefreshDisplay()
-  }
-
-  function activateRestaurant() {
-
-    // Add Lambda calls to edit restaurant here
-
-
-    // add something for a failed activation here:
-
-
-    // on successful activation:
-    model.setPath("Successful Activation")
-    andRefreshDisplay()
-  }
-
   const addTable = () => {
     setTables((prevTables) => [
       ...prevTables, { number: prevTables.length + 1, seats: 3},
@@ -344,11 +381,14 @@ export default function Login() {
     setClosingTime(Number(event.target.value))
   }
 
+
   return (
 
     <div className="container">
         <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
         
+
+        {/* For base login page */}
         { model.isPath("Login") ? (
           <div className="container">
             <p className="subtext">Welcome Restaurant Owner</p>
@@ -370,6 +410,8 @@ export default function Login() {
           </div>
           ) : null }
 
+
+          {/* For create restaurant page */}
         { model.isPath("Create Restaurant") ? (
           <div className="container">
             <p className="subtext">Create a Restaurant</p>
@@ -391,6 +433,7 @@ export default function Login() {
           </div>
           ) : null }
 
+          {/* For successful creation page */}
         { model.isPath("Successful Creation") ? (
           
           <div className="container">
@@ -403,6 +446,8 @@ export default function Login() {
           
           ) : null }
 
+
+          {/* For unactivated restaurant page */}
       {model.isPath("Manage Unactivated") ? (
         <div className="container">
           <p className="subheader">Welcome, {restName}</p>
@@ -412,6 +457,7 @@ export default function Login() {
         </div>
       ) : null}
 
+      {/* For activated restaurant page */}
       {model.isPath("Manage Activated") ? (
         <div className="container">
           <p className="subheader">Welcome back, {restName}</p>
@@ -421,6 +467,7 @@ export default function Login() {
         </div>
       ) : null}
 
+      {/* for activating restuarant */}
       {model.isPath("Activate Restaurant") ? (
         <div className="container">
           <p className="subheader">Are you sure you want to activate(Restaurant Name)?</p>
@@ -430,6 +477,7 @@ export default function Login() {
         </div>
       ) : null}
 
+      {/* for successfully activating restuarant */}
       {model.isPath("Successful Activation") ? (
         <div className="container">
           <p className="subtext">Restaurant successfully activated!</p>
@@ -437,6 +485,7 @@ export default function Login() {
         </div>
       ) : null}
 
+      {/* For editing restaurant page */}
       {model.isPath("Edit Restaurant") ? (
         //the <> here is required for some stupid reason, don't remove it
         <><div className="container">
@@ -536,6 +585,7 @@ export default function Login() {
           </div></>
       ) : null}
 
+      {/* For deleting inactive restaurant page */}
       {model.isPath("Delete Inactive Restaurant Manager") ? (
         <div className="container">
           <p className="subheader">Are you sure you want to delete the inactive (Restaurant Name)?</p>
@@ -545,6 +595,7 @@ export default function Login() {
         </div>
       ) : null}
 
+      {/* For deleting active restaurant page */}
       {model.isPath("Delete Active Restaurant Manager") ? (
         <div className="container">
           <p className="subheader">Are you sure you want to delete the active (Restaurant Name)?</p>
@@ -554,12 +605,15 @@ export default function Login() {
         </div>
       ) : null}
 
+      {/* For successful deletion of restaurant page */}
       {model.isPath("Successful Deletion from Manager") ? (
         <div className="container">
           <p className="subtext">Restaurant successfully deleted!</p>
+          {/* WHERE TO RE-ROUTE THEM NOW???? */}
         </div>
       ) : null}
 
+          {/* For base admin listing page */}
         {model.isPath("Admin List Restaurants") ? (
 
           <div className='container'>
@@ -598,6 +652,7 @@ export default function Login() {
           </div>
         ) : null}
 
+        {/* For admin deletion page */}
         {model.isPath("Admin Delete Restaurant") ? (
 
           <div className='container'>
@@ -614,6 +669,7 @@ export default function Login() {
 
         ) : null}
 
+        {/* For admin deletion success page */}
         {model.isPath("Successful Deletion") ? (
           <div className="container">
             <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
