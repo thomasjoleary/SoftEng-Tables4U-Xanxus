@@ -46,6 +46,81 @@ export default function Consumer() {
             });
     }
 
+    function searchRestaurantsPageClick() {
+        searchRestaurants()
+        model.setPath("Search Restaurants")
+        andRefreshDisplay()
+    }
+
+    function searchRestaurants() {
+        //lambda
+        andRefreshDisplay()
+
+    }
+
+    function findTablePageClick() {
+        findTable()
+        model.setPath("Find Table")
+        andRefreshDisplay()
+    }
+
+    function findTable() {
+        //lambda
+        andRefreshDisplay()
+
+    }
+
+    function customerInputForViewResPageClick() {
+        model.setPath("Customer Input for Viewing")
+        andRefreshDisplay()
+    }
+
+    function viewReservationPageClick() {
+        viewReservation()
+        model.setPath("View Reservation")
+        andRefreshDisplay()
+    }
+
+    function viewReservation() {
+        //lambda
+        andRefreshDisplay()
+    }
+
+    function customerInputForCancelResPageClick() {
+        model.setPath("Customer Input for Canceling")
+        andRefreshDisplay()
+    }
+
+    function cancelReservationCustomerPageClick() {
+        cancelReservationCustomer()
+        model.setPath("Cancel Reservation Customer")
+        andRefreshDisplay()
+    }
+
+    function cancelReservationCustomer() {
+        //lambda
+        model.setPath("Successful Cancellation")
+        andRefreshDisplay()
+    }
+
+
+    function custInputForReservationPageClick(){
+        model.setPath("Customer Input for Reserving")
+        andRefreshDisplay()
+    }
+
+    function makeReservationPageClick(){
+        makeReservation()
+        model.setPath("Make Reservation")
+        andRefreshDisplay()
+    }
+
+    function makeReservation(){
+        //lambda
+        model.setPath("Successful Reservation")
+        andRefreshDisplay()
+    }
+
     function backToConsumerHome() {
         model.setPath("Consumer Home")
         andRefreshDisplay()
@@ -142,8 +217,10 @@ export default function Consumer() {
                             <option value="21">21</option>
                             <option value="22">22</option>
                             <option value="23">23</option>
+                            <option value="24">24</option>
+
                         </select>
-                        <button className="button searchRestaurants"> Search Restaurants </button>
+                        <button className="button searchRestaurants"onClick={() => searchRestaurantsPageClick()}> Search Restaurants </button>
                     </div>
 
 
@@ -238,14 +315,17 @@ export default function Consumer() {
                             <option value="21">21</option>
                             <option value="22">22</option>
                             <option value="23">23</option>
+                            <option value="24">24</option>
+
                         </select>
                         <input className="input restaurantName" type="text" placeholder="Enter Restaurant Name" />
-                        <button className="button findTable"> Find Table </button>
+                        <button className="button findTable"onClick={() => findTablePageClick()}> Find Table </button>
                     </div>
 
                     <div className="bottom-buttons-container">
-                        <button className="button viewReservation"> View Reservation </button>
-                        <button className="button cancelReservation"> Cancel Reservation </button>
+                        <button className="button viewReservation" onClick={() => customerInputForViewResPageClick
+                            ()}> View Reservation </button>
+                        <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     </div>
                 </div>
             ) : null}
@@ -282,8 +362,126 @@ export default function Consumer() {
                             </table>
                         </div>)}
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
-            ) : null
-            }
+            ) : null}
+
+            {/* for search restaurants page */}
+            {model.isPath("Search Restaurants") ? (
+                <div className='container'>
+                    <p className="subtext"> Here are the restaurants we found for your day and time: </p>
+                    {loading ? (
+                        <p>Loading restaurants...</p>
+                    ) : (
+                        <div className="container-list-cust">
+                            <table className="restaurantsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurant Name</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {restaurants.length > 0 ? (
+                                        restaurants.map((restaurant, row) => (
+                                            <tr className="restaurantRow" key={row}>
+                                                <td>{restaurant.name}</td>
+                                                <td>{restaurant.address}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={2}>No restaurants available</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>)}
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+            {/* for find table page */}
+            {model.isPath("Find Table") ? (
+                <div className='container'>
+                    <p className="subtext"> Here are the tables we found for your restaurant, day, time and guest amount: </p>
+                    {loading ? (
+                        <p>Loading tables...</p>
+                    ) : (
+                        <div className="container-list-cust">
+                            <table className="restaurantsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurant Name</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {restaurants.length > 0 ? (
+                                        restaurants.map((restaurant, row) => (
+                                            <tr className="restaurantRow" key={row}>
+                                                <td>{restaurant.name}</td>
+                                                <td>{restaurant.address}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={2}>No tables available</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>)}
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+            {/* for customer putting in info page */}
+            {model.isPath("Customer Input for Viewing") ? (
+                <div className='container'>
+                    <p className="subtext"> Enter your email and confirmation code to view your reservation. </p>
+                    <input className="input restaurantName" type="text" placeholder="Enter email" />
+                    <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
+                    < button className="back-btn" onClick={() => viewReservationPageClick()}>View Reservation</button>
+
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+            {/* for actual viewing reservation page */}
+            {model.isPath("View Reservation") ? (
+                <div className='container'>
+                    <p className="subheader"> Your Reservation: </p>
+                    <p className="subtext">Restaurant name placeholder</p>
+                    <p className="subtext">Time placeholder</p>
+                    <p className="subtext">Table placeholder</p>
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+
+            {/* for putting in info to cancel reservation page */}
+            {model.isPath("Customer Input for Canceling") ? (
+                <div className='container'>
+                    <p className="subtext"> Enter your email and confirmation code to cancel your reservation. </p>
+                    <input className="input restaurantName" type="text" placeholder="Enter email" />
+                    <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
+                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick()}>Cancel Reservation</button>
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+            {/* for actual canceling reservation page */}
+            {model.isPath("Cancel Reservation Customer") ? (
+                <div className='container'>
+                    <p className="subtext"> Are you sure you want to cancel this reservation? </p>
+                    <p className="subtext">Restaurant name placeholder</p>
+                    <p className="subtext">Time placeholder</p>
+                    <p className="subtext">Table placeholder</p>
+                    < button className="back-btn" onClick={() => cancelReservationCustomer()}>Yes</button>
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>No</button> </div>
+            ) : null}
+
+            {/* for confirmation of canceling reservation page */}
+            {model.isPath("Successful Cancellation") ? (
+                <div className='container'>
+                    <p className="subtext"> Your reservation was cancelled! </p>
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
         </body >
     )
 }
