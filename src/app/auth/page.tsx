@@ -276,6 +276,28 @@ export default function Login() {
     andRefreshDisplay()
   }
 
+//the new html functions for the remainder of admin functions
+
+function cancelReservationAdminClick(){
+  model.setPath("Cancel Reservation Admin") //for the HTML itself, you need to enter a particular reservation ID instead of seeing a dropdown
+  andRefreshDisplay()
+}
+
+function cancelReservationAdmin(){
+  //lambda goes here
+}
+
+function generateAvailabilityReportClick(){
+  model.setPath("Generate Availability Report") //this needs work, but it's a placeholder for now
+  andRefreshDisplay()
+}
+
+function generateAvailabilityReport(){
+  //lambda goes here
+}
+
+
+
 
   function deleteRestManagerPageClickFromActive() {
     model.setPath("Delete Active Restaurant Manager")
@@ -607,9 +629,9 @@ export default function Login() {
                         {(restaurant.active === 0) ? (
                           <td>Inactive</td>
                         ): <td>Active</td>}
-                        <td><button className="button cancelButton"> Cancel Reservation </button></td>
+                        <td><button className="button cancelButton" onClick={() => cancelReservationAdminClick()}>Cancel</button></td>
                         <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
-                        <td><button className="button utilizationButton"> Utilization</button></td>
+                        <td><button className="button utilizationButton" onClick={() => generateAvailabilityReportClick()}>Utilization</button></td>
                       </tr>
                     ))
                   ) : (
@@ -649,6 +671,33 @@ export default function Login() {
             <p className="subtext">Restaurant successfully deleted!</p>
             <button className="wide button" onClick={() => backToAdminList()}>Go to List of Restaurants</button>
           </div>
+        ) : null}
+
+
+        {model.isPath("Cancel Reservation Admin") ? (
+
+          <div className='container'>
+            <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+            <p className="subheader">Cancel Reservation</p>
+            <p className="subtext">Enter reservation ID to cancel</p>
+            <input type="text" placeholder="(enter reservation ID)" className="button"></input>
+            <button className="button">Cancel Reservation</button>
+            <button className="button" onClick={() => backToAdminList()}> Go Back </button>
+          </div>
+        ) : null}
+
+
+
+        {model.isPath("Generate Availability Report") ? (
+          
+          <div className='container'>
+            <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+            <p className="subheader">enjoy your report</p>
+            <button className="button" onClick={() => backToAdminList()}> Go Back </button>
+        
+        </div>
         ) : null}
         
     </div>
