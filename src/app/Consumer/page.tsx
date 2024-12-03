@@ -191,6 +191,12 @@ export default function Consumer() {
 
                         </select>
 
+                        <select className="dropdown year">
+                            <option value="">Year</option>
+                            <option value="">2024</option>
+                            <option value="">2025</option>
+                        </select>
+
                         <select className="dropdown time">
                             <option value="">Time</option>
                             <option value="1">0</option>
@@ -288,6 +294,13 @@ export default function Consumer() {
                             <option value="31">31</option>
 
                         </select>
+
+                        <select className="dropdown year">
+                            <option value="">Year</option>
+                            <option value="">2024</option>
+                            <option value="">2025</option>
+                        </select>
+
 
                         <select className="dropdown time">
                             <option value="">Time</option>
@@ -504,7 +517,7 @@ export default function Consumer() {
                 <div className='container'>
                     <p className="subtext"> You have succesfully made your reservation! </p>
                     <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
-                        <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+                    <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
