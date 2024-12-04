@@ -299,7 +299,7 @@ export default function Consumer() {
                             <option value="30">30</option>
                             <option value="31">31</option>
                         </select>
-                        
+
                         <select className="dropdown time">
                             <option value="">Time</option>
                             <option value="1">0</option>
@@ -450,7 +450,6 @@ export default function Consumer() {
                                     <td>placeholder rest address </td>
                                     <td>placeholder table id</td>
                                     <td>placeholder number of seats</td>
-                                    <td>placeholder starting time </td>
 
                                     <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick()}> Make Reservation </button></td>
 
