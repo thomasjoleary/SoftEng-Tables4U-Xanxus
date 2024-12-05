@@ -332,9 +332,29 @@ function generateAvailabilityReport(){
 
 
   function activateRestPageClick() {
-    model.setPath("Activate Restaurant")
+    
+   
+    if(!openingTime || !closingTime) {
+      alert("Please select valid hours.")
+      backToUnactivatedHome()
+      return
+    }
+    else model.setPath("Activate Restaurant")
     andRefreshDisplay()
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   function editRestaurant() {
     const startHour = parseInt((document.getElementById("hours") as HTMLSelectElement).value)
