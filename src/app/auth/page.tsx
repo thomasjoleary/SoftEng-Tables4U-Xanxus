@@ -276,6 +276,11 @@ export default function Login() {
     andRefreshDisplay()
   }
 
+
+
+
+
+
 //the new html functions for the remainder of admin functions
 
 function cancelReservationAdminClick(){
@@ -295,6 +300,12 @@ function generateAvailabilityReportClick(){
 function generateAvailabilityReport(){
   //lambda goes here
 }
+
+
+
+
+
+
 
 
 
@@ -680,10 +691,33 @@ function generateAvailabilityReport(){
             <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
 
             <p className="subheader">Cancel Reservation</p>
-            <p className="subtext">Enter reservation ID to cancel</p>
-            <input type="text" placeholder="(enter reservation ID)" className="button"></input>
-            <button className="button">Cancel Reservation</button>
+            <p className="subtext">Select a customer's resrevation to cancel</p>
+            
+          https://stackoverflow.com/questions/1085801/get-selected-value-in-dropdown-list-using-javascript
             <button className="button" onClick={() => backToAdminList()}> Go Back </button>
+
+            <div className="container-list-admin">
+              <table className="tableForAdminListRestaurants">
+                <tbody>
+                  {restaurants.length > 0 ? (
+                    restaurants.map((restaurant, row) => (
+                      <tr className="restaurantRow" key={row}>
+                        <td>{restaurant.name}</td>
+                        <td>{"restaurant.rvid"}</td>
+                        <td>{"restaurant.userEmail"}</td>
+                      
+                        <td><button className="button cancelButton" onClick={() => cancelReservationAdmin()}>Cancel</button></td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={2}>No restaurants available</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
           </div>
         ) : null}
 
