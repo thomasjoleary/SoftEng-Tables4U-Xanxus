@@ -104,18 +104,18 @@ export default function Consumer() {
     }
 
 
-    function custInputForReservationPageClick(){
+    function custInputForReservationPageClick() {
         model.setPath("Customer Input for Reserving")
         andRefreshDisplay()
     }
 
-    function makeReservationPageClick(){
-        makeReservation()
+    function makeReservationPageClick() {
         model.setPath("Make Reservation")
+        makeReservation()
         andRefreshDisplay()
     }
 
-    function makeReservation(){
+    function makeReservation() {
         //lambda
         model.setPath("Successful Reservation")
         andRefreshDisplay()
@@ -139,6 +139,12 @@ export default function Consumer() {
                     <button className="button allRestaurants" onClick={() => listRestaurantsPageClick()}> List All Restaurants</button>
 
                     <div className="input searchRestaurants">
+                        <select className="dropdown year">
+                            <option value="">Year</option>
+                            <option value="">2024</option>
+                            <option value="">2025</option>
+                        </select>
+
                         <select className="dropdown month">
                             <option value="">Month</option>
                             <option value="1">1</option>
@@ -218,13 +224,8 @@ export default function Consumer() {
                             <option value="22">22</option>
                             <option value="23">23</option>
                             <option value="24">24</option>
-
                         </select>
-                        <button className="button searchRestaurants"onClick={() => searchRestaurantsPageClick()}> Search Restaurants </button>
-                    </div>
 
-
-                    <div className="input findTable">
                         <select className="dropdown guests">
                             <option value="">Guests</option>
                             <option value="1">1</option>
@@ -237,6 +238,17 @@ export default function Consumer() {
                             <option value="8">8</option>
                         </select>
 
+                        <button className="button searchRestaurants" onClick={() => searchRestaurantsPageClick()}> Search Available Restaurants </button>
+                    </div>
+
+
+                    <div className="input findTable">
+                        <select className="dropdown year">
+                            <option value="">Year</option>
+                            <option value="">2024</option>
+                            <option value="">2025</option>
+                        </select>
+
                         <select className="dropdown month">
                             <option value="">Month</option>
                             <option value="1">1</option>
@@ -286,7 +298,6 @@ export default function Consumer() {
                             <option value="29">29</option>
                             <option value="30">30</option>
                             <option value="31">31</option>
-
                         </select>
 
                         <select className="dropdown time">
@@ -316,15 +327,27 @@ export default function Consumer() {
                             <option value="22">22</option>
                             <option value="23">23</option>
                             <option value="24">24</option>
-
                         </select>
+
+                        <select className="dropdown guests">
+                            <option value="">Guests</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+
+
                         <input className="input restaurantName" type="text" placeholder="Enter Restaurant Name" />
-                        <button className="button findTable"onClick={() => findTablePageClick()}> Find Table </button>
+                        <button className="button findTable" onClick={() => findTablePageClick()}> Find Table for Specific Restaurant </button>
                     </div>
 
                     <div className="bottom-buttons-container">
-                        <button className="button viewReservation" onClick={() => customerInputForViewResPageClick
-                            ()}> View Reservation </button>
+                        <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
                         <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     </div>
                 </div>
@@ -367,20 +390,14 @@ export default function Consumer() {
             {/* for search restaurants page */}
             {model.isPath("Search Restaurants") ? (
                 <div className='container'>
-                    <p className="subtext"> Here are the restaurants we found for your day and time: </p>
+                    <p className="subtext"> Here are the available restaurants we found for your day, time and number of guests: </p>
                     {loading ? (
                         <p>Loading restaurants...</p>
                     ) : (
                         <div className="container-list-cust">
                             <table className="restaurantsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Restaurant Name</th>
-                                        <th>Address</th>
-                                    </tr>
-                                </thead>
                                 <tbody>
-                                    {restaurants.length > 0 ? (
+                                    {/* {restaurants.length > 0 ? (
                                         restaurants.map((restaurant, row) => (
                                             <tr className="restaurantRow" key={row}>
                                                 <td>{restaurant.name}</td>
@@ -391,7 +408,11 @@ export default function Consumer() {
                                         <tr>
                                             <td colSpan={2}>No restaurants available</td>
                                         </tr>
-                                    )}
+                                    )} */}
+
+                                    <td>placeholder rest name </td>
+                                    <td>placeholder rest address </td>
+
                                 </tbody>
                             </table>
                         </div>)}
@@ -401,31 +422,37 @@ export default function Consumer() {
             {/* for find table page */}
             {model.isPath("Find Table") ? (
                 <div className='container'>
-                    <p className="subtext"> Here are the tables we found for your restaurant, day, time and guest amount: </p>
+                    <p className="subtext"> Here are the available tables we found for your restaurant, number of guests and day. </p>
+                    <p className="subtext"> To make a reservation, click on the button next to a listed table. </p>
                     {loading ? (
                         <p>Loading tables...</p>
                     ) : (
                         <div className="container-list-cust">
                             <table className="restaurantsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Restaurant Name</th>
-                                        <th>Address</th>
-                                    </tr>
-                                </thead>
                                 <tbody>
-                                    {restaurants.length > 0 ? (
+                                    {/* the restaurants stuff has to be changed */}
+
+                                    {/* {restaurants.length > 0 ? (
                                         restaurants.map((restaurant, row) => (
                                             <tr className="restaurantRow" key={row}>
                                                 <td>{restaurant.name}</td>
                                                 <td>{restaurant.address}</td>
+                                                <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick()}> Make Reservation </button></td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
                                             <td colSpan={2}>No tables available</td>
                                         </tr>
-                                    )}
+                                    )} */}
+
+                                    <td>placeholder rest name </td>
+                                    <td>placeholder rest address </td>
+                                    <td>placeholder table id</td>
+                                    <td>placeholder number of seats</td>
+
+                                    <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick()}> Make Reservation </button></td>
+
                                 </tbody>
                             </table>
                         </div>)}
@@ -479,6 +506,23 @@ export default function Consumer() {
             {model.isPath("Successful Cancellation") ? (
                 <div className='container'>
                     <p className="subtext"> Your reservation was cancelled! </p>
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+            {/* for putting in email to make reservation */}
+            {model.isPath("Customer Input for Reserving") ? (
+                <div className='container'>
+                    <p className="subtext"> Enter your email to confirm your reservation. </p>
+                    <input className="input" type="text" placeholder="Enter email" />
+                    <button className="back-btn" onClick={() => makeReservationPageClick()}>Confirm Reservation</button>
+                    < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
+            ) : null}
+
+            {model.isPath("Successful Reservation") ? (
+                <div className='container'>
+                    <p className="subtext"> You have succesfully made your reservation! </p>
+                    <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
+                    <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
