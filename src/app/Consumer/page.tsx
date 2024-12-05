@@ -14,6 +14,8 @@ export default function Consumer() {
     const [model, setModel] = React.useState(new Model("Consumer Home"))
     const router = useRouter()
     const [restaurants, setRestaurants] = React.useState<{ name: string; address: string }[]>([])
+    const [availableRestaurants, setAvailableRestaurants] = React.useState<{ name: string; address: string }[]>([])
+    const [specificRest, setSpecificRest] = React.useState<{ name: string; address: string; tableID: string; seats: string }[]>([])
     const [loading, setLoading] = React.useState(false)
 
 
@@ -48,25 +50,137 @@ export default function Consumer() {
 
     function searchRestaurantsPageClick() {
         searchRestaurants()
-        model.setPath("Search Restaurants")
+        //model.setPath("Search Restaurants")
         andRefreshDisplay()
     }
 
     function searchRestaurants() {
-        //lambda
-        andRefreshDisplay()
+        const year = parseInt((document.getElementById("dropdown year-search all") as HTMLSelectElement).value)
+        const month = parseInt((document.getElementById("dropdown month-search all") as HTMLSelectElement).value)
+        const day = parseInt((document.getElementById("dropdown day-search all") as HTMLSelectElement).value)
+        const time = parseInt((document.getElementById("dropdown time-search all") as HTMLSelectElement).value)
+        const guests = parseInt((document.getElementById("dropdown guests-search all") as HTMLSelectElement).value)
 
+        if (!year || !month || !day || !time || !guests) {
+            alert("All fields must be filled!")
+            return
+        }
+        const selectedDate = new Date(year, month - 1, day)
+        const selectedHour = time
+
+        const currentDate = new Date()
+        const currentHour = currentDate.getHours()
+
+        if (selectedDate < currentDate ||
+            (selectedDate.toDateString() === currentDate.toDateString() && selectedHour <= currentHour)
+        ) {
+            alert("Selected date and time must be in the future.")
+            return
+        }
+
+        console.log("year:", year)
+        console.log("month:", month)
+        console.log("day:", day)
+        console.log("time:", time)
+        console.log("guests:", guests)
+
+        const requestBody = {
+            year,
+            month,
+            day,
+            time,
+            guests
+        }
+        const jsonData = JSON.stringify({ body: JSON.stringify(requestBody) })
+        axios
+            .post(`${gateway}searchAvailableRestaurantsDayAndTime`, jsonData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => {
+                console.log("Restaurants searched successfully:", response.data)
+                const parsedResponse = JSON.parse(response.data.body)
+                console.log("Parsed Response:", parsedResponse)
+
+                setAvailableRestaurants(parsedResponse.availableRestaurants || [])
+                model.setPath("Search Restaurants")
+                andRefreshDisplay()
+            })
+            .catch((error) => {
+                console.error("Error searching restaurants:", error)
+                alert("There was an error searching for restaurants. Please try again.")
+            });
+
+        //andRefreshDisplay()
     }
 
     function findTablePageClick() {
         findTable()
-        model.setPath("Find Table")
+        //model.setPath("Find Table")
         andRefreshDisplay()
     }
 
     function findTable() {
-        //lambda
-        andRefreshDisplay()
+        const year = parseInt((document.getElementById("dropdown year-search specific") as HTMLSelectElement).value)
+        const month = parseInt((document.getElementById("dropdown month-search specific") as HTMLSelectElement).value)
+        const day = parseInt((document.getElementById("dropdown day-search specific") as HTMLSelectElement).value)
+        const time = parseInt((document.getElementById("dropdown time-search specific") as HTMLSelectElement).value)
+        const guests = parseInt((document.getElementById("dropdown guests-search specific") as HTMLSelectElement).value)
+        const name = (document.querySelector('input[placeholder="Enter Restaurant Name"]') as HTMLInputElement)?.value
+
+        if (!year || !month || !day || !time || !guests || !name) {
+            alert("All fields must be filled!")
+            return
+        }
+        const selectedDate = new Date(year, month - 1, day)
+        const selectedHour = time
+
+        const currentDate = new Date()
+        const currentHour = currentDate.getHours()
+
+        if (selectedDate < currentDate ||
+            (selectedDate.toDateString() === currentDate.toDateString() && selectedHour <= currentHour)
+        ) {
+            alert("Selected date and time must be in the future.")
+            return
+        }
+
+        console.log("year:", year)
+        console.log("month:", month)
+        console.log("day:", day)
+        console.log("time:", time)
+        console.log("guests:", guests)
+        console.log("name:", name)
+
+        const requestBody = {
+            year,
+            month,
+            day,
+            time,
+            guests,
+            name
+        }
+        const jsonData = JSON.stringify({ body: JSON.stringify(requestBody) })
+        axios
+            .post(`${gateway}searchSpecificRestaurantAvailabilityFutureDay`, jsonData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => {
+                console.log("Specific restaurant searched successfully:", response.data)
+                const parsedResponse = JSON.parse(response.data.body)
+                console.log("Parsed Response:", parsedResponse)
+
+                setSpecificRest(parsedResponse.availableTables || [])
+                model.setPath("Find Table")
+                andRefreshDisplay()
+            })
+            .catch((error) => {
+                console.error("Error searching your restaurant:", error)
+                alert("There was an error searching your restaurant. Please try again.")
+            });
 
     }
 
@@ -139,13 +253,13 @@ export default function Consumer() {
                     <button className="button allRestaurants" onClick={() => listRestaurantsPageClick()}> List All Restaurants</button>
 
                     <div className="input searchRestaurants">
-                        <select className="dropdown year">
+                        <select id="dropdown year-search all">
                             <option value="">Year</option>
-                            <option value="">2024</option>
-                            <option value="">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
                         </select>
 
-                        <select className="dropdown month">
+                        <select id="dropdown month-search all">
                             <option value="">Month</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -161,7 +275,7 @@ export default function Consumer() {
                             <option value="12">12</option>
                         </select>
 
-                        <select className="dropdown day">
+                        <select id="dropdown day-search all">
                             <option value="">Day</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -197,7 +311,7 @@ export default function Consumer() {
 
                         </select>
 
-                        <select className="dropdown time">
+                        <select id="dropdown time-search all">
                             <option value="">Time</option>
                             <option value="1">0</option>
                             <option value="1">1</option>
@@ -226,7 +340,7 @@ export default function Consumer() {
                             <option value="24">24</option>
                         </select>
 
-                        <select className="dropdown guests">
+                        <select id="dropdown guests-search all">
                             <option value="">Guests</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -243,13 +357,13 @@ export default function Consumer() {
 
 
                     <div className="input findTable">
-                        <select className="dropdown year">
+                        <select id="dropdown year-search specific">
                             <option value="">Year</option>
-                            <option value="">2024</option>
-                            <option value="">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
                         </select>
 
-                        <select className="dropdown month">
+                        <select id="dropdown month-search specific">
                             <option value="">Month</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -265,7 +379,7 @@ export default function Consumer() {
                             <option value="12">12</option>
                         </select>
 
-                        <select className="dropdown day">
+                        <select id="dropdown day-search specific">
                             <option value="">Day</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -300,7 +414,7 @@ export default function Consumer() {
                             <option value="31">31</option>
                         </select>
 
-                        <select className="dropdown time">
+                        <select id="dropdown time-search specific">
                             <option value="">Time</option>
                             <option value="1">0</option>
                             <option value="1">1</option>
@@ -329,7 +443,7 @@ export default function Consumer() {
                             <option value="24">24</option>
                         </select>
 
-                        <select className="dropdown guests">
+                        <select id="dropdown guests-search specific">
                             <option value="">Guests</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -396,9 +510,15 @@ export default function Consumer() {
                     ) : (
                         <div className="container-list-cust">
                             <table className="restaurantsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurant Name</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
-                                    {/* {restaurants.length > 0 ? (
-                                        restaurants.map((restaurant, row) => (
+                                    {availableRestaurants.length > 0 ? (
+                                        availableRestaurants.map((restaurant, row) => (
                                             <tr className="restaurantRow" key={row}>
                                                 <td>{restaurant.name}</td>
                                                 <td>{restaurant.address}</td>
@@ -408,10 +528,7 @@ export default function Consumer() {
                                         <tr>
                                             <td colSpan={2}>No restaurants available</td>
                                         </tr>
-                                    )} */}
-
-                                    <td>placeholder rest name </td>
-                                    <td>placeholder rest address </td>
+                                    )}
 
                                 </tbody>
                             </table>
@@ -429,14 +546,25 @@ export default function Consumer() {
                     ) : (
                         <div className="container-list-cust">
                             <table className="restaurantsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurant Name</th>
+                                        <th>Address</th>
+                                        <th>Table ID</th>
+                                        <th>Number of Seats</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     {/* the restaurants stuff has to be changed */}
 
-                                    {/* {restaurants.length > 0 ? (
-                                        restaurants.map((restaurant, row) => (
+                                    {specificRest.length > 0 ? (
+                                        specificRest.map((table, row) => (
                                             <tr className="restaurantRow" key={row}>
-                                                <td>{restaurant.name}</td>
-                                                <td>{restaurant.address}</td>
+                                                <td>{table.name}</td>
+                                                <td>{table.address}</td>
+                                                <td>{table.tableID}</td>
+                                                <td>{table.seats}</td>
                                                 <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick()}> Make Reservation </button></td>
                                             </tr>
                                         ))
@@ -444,14 +572,7 @@ export default function Consumer() {
                                         <tr>
                                             <td colSpan={2}>No tables available</td>
                                         </tr>
-                                    )} */}
-
-                                    <td>placeholder rest name </td>
-                                    <td>placeholder rest address </td>
-                                    <td>placeholder table id</td>
-                                    <td>placeholder number of seats</td>
-
-                                    <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick()}> Make Reservation </button></td>
+                                    )}
 
                                 </tbody>
                             </table>
