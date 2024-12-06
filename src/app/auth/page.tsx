@@ -91,7 +91,7 @@ export default function Login() {
 
     if (!riddata) {
       console.error("No riddata to delete")
-      console.error("No riddata to delete")
+      
       return
     }
     console.log("Attempting to activate restaurant with ID:", riddata)
@@ -107,7 +107,8 @@ export default function Login() {
       .catch((error) => {
         console.error("Failed to activate restaurant", error)
       })
-    model.setPath("Successful Activation")
+    model.setPath("Successful Deletion")
+    console.log("Restaurant activated successfully.")
     andRefreshDisplay()
   }
 
@@ -336,6 +337,11 @@ function generateAvailabilityReport(){
    
     if(!openingTime || !closingTime) {
       alert("Please select valid hours.")
+      backToUnactivatedHome()
+      return
+    }
+    if (tables.length === 0) {
+      alert("Please add at least one table.")
       backToUnactivatedHome()
       return
     }
