@@ -18,7 +18,9 @@ export default function Consumer() {
     const [specificRest, setSpecificRest] = React.useState<{ name: string; address: string; tableID: string; seats: string }[]>([])
     const [loading, setLoading] = React.useState(false)
     const [riddata, setriddata] = React.useState("")
-
+    const [selectedTable, setSelectedTable] = React.useState("") //for table id primarily
+    const [reservationDetails, setReservationDetails] = React.useState<{year: number;month: number;day: number;time: number;guests: number}>()
+    const [rvid, setRVID] = React.useState("")
 
 
     // helper function that forces React app to redraw whenever this is called.
@@ -179,6 +181,8 @@ export default function Consumer() {
                 model.setPath("Find Table")
                 setriddata(parsedResponse.availableTables[0].rid)
                 console.log("rid to reserve later:", parsedResponse.availableTables[0].rid)
+                setReservationDetails({year, month, day, time, guests})
+
                 //console.log("riddata:" , riddata)
                 andRefreshDisplay()
             })
@@ -188,7 +192,8 @@ export default function Consumer() {
             });
     }
 
-    function custInputForReservationPageClick() {
+    function custInputForReservationPageClick(tid: string) {
+        setSelectedTable(tid)
         model.setPath("Customer Input for Reserving")
         andRefreshDisplay()
     }
@@ -196,13 +201,85 @@ export default function Consumer() {
     function makeReservationPageClick() {
         model.setPath("Make Reservation")
         makeReservation()
-        andRefreshDisplay()
+        //andRefreshDisplay()
     }
 
     function makeReservation() {
-        //lambda
-        model.setPath("Successful Reservation")
-        andRefreshDisplay()
+        const email = (document.querySelector('input[ placeholder="Enter email"]') as HTMLInputElement)?.value
+        const rid = riddata
+        const tid = selectedTable
+        const year = reservationDetails?.year
+        const month = reservationDetails?.month
+        const day = reservationDetails?.day
+        const time = reservationDetails?.time
+        const guests = reservationDetails?.guests
+
+        if (!year || !month || !day || !time || !guests || !rid || !tid) {
+            alert("Year, month, day, time, rid and tid must be provided!")
+            return
+        }
+        if(!email || !email.includes('@')){
+            alert("Email must be provided and be valid (contains @)!")
+            return
+        }
+        const selectedDate = new Date(year, month - 1, day)
+        const selectedHour = time
+
+        const currentDate = new Date()
+        const currentHour = currentDate.getHours()
+
+        if (selectedDate < currentDate ||
+            (selectedDate.toDateString() === currentDate.toDateString() && selectedHour <= currentHour)
+        ) {
+            alert("Selected date and time must be in the future.")
+            return
+        }
+
+        console.log("year:", year)
+        console.log("month:", month)
+        console.log("day:", day)
+        console.log("time:", time)
+        console.log("guests:", guests)
+        console.log("email:", email)
+        console.log("rid:", rid)
+        console.log("tid:", tid)
+
+
+        const requestBody = {
+            year,
+            month,
+            day,
+            time,
+            guests,
+            email,
+            rid, 
+            tid
+        }
+        const jsonData = JSON.stringify({ body: JSON.stringify(requestBody) })
+        axios
+            .post(`${gateway}makeReservation`, jsonData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => {
+                console.log("Reservation made successfully:", response.data)
+                const parsedResponse = JSON.parse(response.data.body)
+                console.log("Parsed Response:", parsedResponse)
+
+                console.log("Generated rvid:", parsedResponse.rvid)
+                setRVID(parsedResponse.rvid)
+
+                model.setPath("Successful Reservation")
+
+                andRefreshDisplay()
+            })
+            .catch((error) => {
+                console.error("Error making your reservation:", error)
+                alert("There was an error making your reservation. Please try again.")
+            });
+
+       // andRefreshDisplay()
     }
 
     function customerInputForViewResPageClick() {
@@ -341,7 +418,6 @@ export default function Consumer() {
                             <option value="21">21</option>
                             <option value="22">22</option>
                             <option value="23">23</option>
-                            <option value="24">24</option>
                         </select>
 
                         <select id="dropdown guests-search all">
@@ -444,7 +520,6 @@ export default function Consumer() {
                             <option value="21">21</option>
                             <option value="22">22</option>
                             <option value="23">23</option>
-                            <option value="24">24</option>
                         </select>
 
                         <select id="dropdown guests-search specific">
@@ -560,7 +635,6 @@ export default function Consumer() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* the restaurants stuff has to be changed */}
 
                                     {specificRest.length > 0 ? (
                                         specificRest.map((table, row) => (
@@ -569,7 +643,7 @@ export default function Consumer() {
                                                 <td>{table.address}</td>
                                                 <td>{table.tableID}</td>
                                                 <td>{table.seats}</td>
-                                                <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick()}> Make Reservation </button></td>
+                                                <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick(table.tableID)}> Make Reservation </button></td>
                                             </tr>
                                         ))
                                     ) : (
@@ -643,9 +717,12 @@ export default function Consumer() {
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
+            {/* for seeing confirmation of creation of reservation */}
             {model.isPath("Successful Reservation") ? (
                 <div className='container'>
                     <p className="subtext"> You have succesfully made your reservation! </p>
+                    <p className="subtext"> This is your reservation ID. Use it to view or cancel this reservation.</p>
+                    <p className="subheader">{rvid}</p>
                     <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
                     <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
