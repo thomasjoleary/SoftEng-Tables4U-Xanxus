@@ -17,6 +17,8 @@ export default function Consumer() {
     const [availableRestaurants, setAvailableRestaurants] = React.useState<{ name: string; address: string }[]>([])
     const [specificRest, setSpecificRest] = React.useState<{ name: string; address: string; tableID: string; seats: string }[]>([])
     const [loading, setLoading] = React.useState(false)
+    const [riddata, setriddata] = React.useState("")
+
 
 
     // helper function that forces React app to redraw whenever this is called.
@@ -175,13 +177,32 @@ export default function Consumer() {
 
                 setSpecificRest(parsedResponse.availableTables || [])
                 model.setPath("Find Table")
+                setriddata(parsedResponse.availableTables[0].rid)
+                console.log("rid to reserve later:", parsedResponse.availableTables[0].rid)
+                //console.log("riddata:" , riddata)
                 andRefreshDisplay()
             })
             .catch((error) => {
                 console.error("Error searching your restaurant:", error)
                 alert("There was an error searching your restaurant. Please try again.")
             });
+    }
 
+    function custInputForReservationPageClick() {
+        model.setPath("Customer Input for Reserving")
+        andRefreshDisplay()
+    }
+
+    function makeReservationPageClick() {
+        model.setPath("Make Reservation")
+        makeReservation()
+        andRefreshDisplay()
+    }
+
+    function makeReservation() {
+        //lambda
+        model.setPath("Successful Reservation")
+        andRefreshDisplay()
     }
 
     function customerInputForViewResPageClick() {
@@ -217,23 +238,6 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-
-    function custInputForReservationPageClick() {
-        model.setPath("Customer Input for Reserving")
-        andRefreshDisplay()
-    }
-
-    function makeReservationPageClick() {
-        model.setPath("Make Reservation")
-        makeReservation()
-        andRefreshDisplay()
-    }
-
-    function makeReservation() {
-        //lambda
-        model.setPath("Successful Reservation")
-        andRefreshDisplay()
-    }
 
     function backToConsumerHome() {
         model.setPath("Consumer Home")
