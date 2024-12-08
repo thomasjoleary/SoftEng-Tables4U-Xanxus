@@ -106,7 +106,7 @@ export default function Login() {
       .catch((error) => {
         console.error("Failed to activate restaurant", error)
       })
-    model.setPath("Successful Deletion")
+    model.setPath("Successful Activation")
     console.log("Restaurant activated successfully.")
     andRefreshDisplay()
   }
