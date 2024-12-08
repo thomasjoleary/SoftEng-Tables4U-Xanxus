@@ -90,8 +90,7 @@ export default function Login() {
   function activateRestaurant() {
 
     if (!riddata) {
-      console.error("No riddata to delete")
-      
+      console.error("No riddata to delete") 
       return
     }
     console.log("Attempting to activate restaurant with ID:", riddata)
