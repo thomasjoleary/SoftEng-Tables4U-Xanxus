@@ -86,7 +86,7 @@ export const handler = async (event) => {
 
         const response = {
             input: { year, month, day, time, guests, name },
-            availableRestaurants: results.map((restaurant) => ({
+            availableTables: results.map((restaurant) => ({
                 rid: restaurant.rid,
                 name: restaurant.name,
                 address: restaurant.address,

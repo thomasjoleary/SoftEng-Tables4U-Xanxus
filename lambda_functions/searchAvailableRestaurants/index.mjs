@@ -83,7 +83,11 @@ export const handler = async (event) => {
         console.log("Restaurants selected");
 
         const response = {
-            input: { year, month, day, time, guests },
+            year,
+            month,
+            day,
+            time,
+            guests,
             availableRestaurants: results.map((restaurant) => ({
                 rid: restaurant.rid,
                 name: restaurant.name,
