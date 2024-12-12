@@ -28,6 +28,8 @@ export default function Login() {
   const hours = Array.from({length: 24}, (_, i) => i)
   const availabilitytables = Array(tables.length).fill(0).map((_, i) => i + 1)
   const [availSET, setAvailSet] = React.useState(0)
+  const [reservationRid, setReservationRid] = React.useState("")
+  const [reservationList, setReservationList] = React.useState<{ rvid : string; guestEmail : string; numGuests : number; date : string; time : number }[]>([])
 
   const today = new Date()
   const todayyear = today.getFullYear()
@@ -291,7 +293,7 @@ export default function Login() {
       // send post request
       const response = await axios.post(
 
-        gateway.concat("generateAvailabilityReport"),//!!!
+        gateway.concat("generateAvailabilityReport"),
   
         {
           body: {
@@ -325,9 +327,73 @@ export default function Login() {
     setReport(rep)
 
     model.setPath("Utilization Report")
+    andRefreshDisplay()
 
   }
 
+  async function cancelResPageClick( rid : string) {
+
+    setReservationRid(rid)
+
+    let res
+
+    try {
+      // send post request
+      const response = await axios.post(
+
+        gateway.concat("listReservations"),
+  
+        {
+          body: {
+            rid : rid
+          }
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    setReservationList(res)
+    model.setPath("Admin List Reservations")
+    andRefreshDisplay()
+
+  }
+
+  async function adminCancelReservation( rvid : string ) {
+
+    let res
+
+    try {
+      // send post request
+      const response = await axios.post(
+
+        gateway.concat("cancelReservationAdmin"),
+  
+        {
+          body: {
+            rvid : rvid
+          }
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    alert("Reservation Deleted Successfully")
+    
+    cancelResPageClick(reservationRid)
+
+  }
 
 
   async function updateCurrentSettings () {
@@ -555,26 +621,6 @@ export default function Login() {
   const handleCloseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setClosingTime(Number(event.target.value))
   }
-
-//the new html functions for the remainder of admin functions
-function cancelReservationAdminClick(rid: string){
-  model.setPath("Cancel Reservation Admin") //for the HTML itself, you need to enter a particular reservation ID instead of seeing a dropdown
-  setriddata(rid)
-  andRefreshDisplay()
-}
-function cancelReservationAdmin(){
-  //lambda goes here
-}
-function generateAvailabilityReportClick(rid: string){
-  model.setPath("Generate Availability Report") //this needs work, but it's a placeholder for now
-  andRefreshDisplay()
-}
-function generateAvailabilityReport(){
-  //lambda goes here
-}
-
-
-
 
   return (
 
@@ -918,7 +964,7 @@ function generateAvailabilityReport(){
                       {(restaurant.active === 0) ? (
                         <td>Inactive</td>
                       ): <td>Active</td>}
-                      <td><button className="button cancelButton"> Cancel Reservation </button></td>
+                      <td><button className="button cancelButton" onClick={() => cancelResPageClick(restaurant.rid)}> Cancel Reservation </button></td>
                       <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
                       <td><button className="button utilizationButton" onClick={() => utilizationButtonClick(restaurant.rid, restaurant.name, restaurant.address, restaurant.active)}> Utilization</button></td>
                     </tr>
@@ -1001,6 +1047,47 @@ function generateAvailabilityReport(){
         </div>
       ) : null}
 
+      {model.isPath("Admin List Reservations") ? (
+
+        <div className='container'>
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+          <p className="subheader">List of Reservations</p>
+          <div className="container-list-admin">
+            <table className="tableForAdminListRestaurants">
+              <tbody>
+                <tr>
+                  <td>Reservation ID</td>
+                  <td>Guest Email</td>
+                  <td>Number of Guests</td>
+                  <td>Date</td>
+                  <td>Time</td>
+                  <td></td>
+                </tr>
+                {reservationList.length > 0 ? (
+                  reservationList.map((rv, row) => (
+                    <tr className="reportRow" key={row}>
+                      <td>{rv.rvid}</td>
+                      <td>{rv.guestEmail}</td>
+                      <td>{rv.numGuests}</td>
+                      <td>{`${rv.date}%`}</td>
+                      <td>{`${rv.time}%`}</td>
+                      <td>
+                        <button onClick={() => adminCancelReservation(rv.rvid)}>Cancel</button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2}>No report available.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : null}
+
         {model.isPath("Admin Delete Restaurant") ? (
 
           <div className='container'>
@@ -1025,47 +1112,9 @@ function generateAvailabilityReport(){
             <button className="wide button" onClick={() => backToAdminList()}>Go to List of Restaurants</button>
           </div>
         ) : null}
-
-
-
-{model.isPath("Cancel Reservation Admin") ? (
-          <div className='container'>
-            <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
-            <p className="subheader">Cancel Reservation</p>
-            <p className="subtext">Select a customer's resrevation to cancel</p>
-          https://stackoverflow.com/questions/1085801/get-selected-value-in-dropdown-list-using-javascript
-            <button className="button" onClick={() => backToAdminList()}> Go Back </button>
-            <div className="container-list-admin">
-              <table className="tableForAdminListRestaurants">
-                <tbody>
-                  {restaurants.length > 0 ? (
-                    restaurants.map((restaurant, row) => (
-                      <tr className="restaurantRow" key={row}>
-                        <td>{restaurant.name}</td>
-                        <td>{"restaurant.rvid"}</td>
-                        <td>{"restaurant.userEmail"}</td>
-                        <td><button className="button cancelButton" onClick={() => cancelReservationAdmin()}>Cancel</button></td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={2}>No restaurants available</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ) : null}
         
-        {model.isPath("Generate Availability Report") ? (
-                  <div className='container'>
-                   <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
-                   <p className="subheader">enjoy your report</p>
-                   <button className="button" onClick={() => backToAdminList()}> Go Back </button>
-                </div>
-               ) : null}
-           </div>
+        
+    </div>
         
     
 
