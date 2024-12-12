@@ -27,6 +27,7 @@ body {
     padding: 10px 20px;
     font-size: 25px;
     cursor: pointer;
+    background: whitesmoke;
 }
 
 .owner-link {
@@ -182,7 +183,8 @@ body {
 
 .input.searchRestaurants select, .input.restaurantName,
 .input.findTable select {
-    height: 30px; 
+    height: 40px; 
+    width: 150px;
     padding: 10px 20px; 
     font-size: 18px; 
     border-radius: 0px; 
@@ -234,7 +236,7 @@ body {
 }
 
 .container-list-admin {
-    max-height: 300px;
+    max-height: 800px;
     overflow-x: hidden;
     padding: 0 10px;
     overflow-y: auto;
@@ -246,8 +248,23 @@ body {
 }
 
 .container-list-cust {
-    max-height: 200px;
+    max-height: 800px;
     overflow-x: hidden;
     padding: 0 10px;
     overflow-y: auto;
+}
+
+.testcss {
+    all: unset;
+    color: red;
+    background: blue;
+}
+
+  .container-select-date {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    flex-direction: column; /* Stack the dropdowns and button vertically */
+    padding: 0 10px;
+    height: 100%; /* Ensure the container takes up enough height */
 }

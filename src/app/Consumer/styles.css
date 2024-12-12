@@ -182,7 +182,7 @@ body {
 
 .input.searchRestaurants select, .input.restaurantName,
 .input.findTable select {
-    height: 30px; 
+    height: 40px; 
     padding: 10px 20px; 
     font-size: 18px; 
     border-radius: 0px; 
@@ -225,7 +225,7 @@ body {
 }
 
 .container-list-cust {
-    max-height: 200px;
+    max-height: 800px;
     overflow-x: hidden;
     padding: 0 10px;
     overflow-y: auto;
