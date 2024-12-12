@@ -21,8 +21,9 @@ export default function Consumer() {
     const [selectedTable, setSelectedTable] = React.useState("") //for table id primarily
     const [reservationDetails, setReservationDetails] = React.useState<{year: number;month: number;day: number;time: number;guests: number}>()
     const [rvid, setRVID] = React.useState("")
+    
 
-
+    
     // helper function that forces React app to redraw whenever this is called.
     function andRefreshDisplay() {
         forceRedraw(redraw + 1)
@@ -279,6 +280,8 @@ export default function Consumer() {
                 alert("There was an error making your reservation. Please try again.")
             });
 
+
+            
        // andRefreshDisplay()
     }
 
@@ -303,14 +306,35 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
+//im actually tweaking right now
+//what 
+//uhhhhhh
+
     function cancelReservationCustomerPageClick() {
-        cancelReservationCustomer()
+        console.log("Selected reservation ID for deletion:", rvid)
+        
         model.setPath("Cancel Reservation Customer")
         andRefreshDisplay()
+
+
     }
 
     function cancelReservationCustomer() {
-        //lambda
+        console.error("Beginning to cancel reservation for customer")
+        if (!rvid) {
+            console.error("No rvid to delete")
+            return
+        }
+        console.log("Attempting to cancel reservation with ID:", rvid)
+
+        //send post request
+        axios.post(`${gateway}deleteReservationCustomer`, { body: JSON.stringify({ rvid }) })
+            .then(() => {
+                console.log("Reservation canceled successfully.")
+            })
+            .catch((error) => {
+                console.error("Failed to cancel reservation", error)
+            })
         model.setPath("Successful Cancellation")
         andRefreshDisplay()
     }
@@ -320,6 +344,49 @@ export default function Consumer() {
         model.setPath("Consumer Home")
         andRefreshDisplay()
     }
+
+/*
+if (!riddata) {
+      console.error("No riddata to delete")
+      return
+    }
+    console.log("Attempting to activate restaurant with ID:", riddata)
+
+    //send post request
+    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata }) } 
+    
+    )
+    
+      .then(() => {
+        console.log("Restaurant activated successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to activate restaurant", error)
+      })
+    model.setPath("Successful Activation")
+    andRefreshDisplay()
+*/
+
+
+
+
+
+
+/*
+//cancel reservation customer
+function cancelReservationCustomerClick(){
+  model.setPath("Cancel Reservation Customer")
+  andRefreshDisplay()
+}
+
+
+function cancelReservationCustomer(rvid: string){
+  //lambda goes here
+}
+
+*/
+
+
 
     return (
 
