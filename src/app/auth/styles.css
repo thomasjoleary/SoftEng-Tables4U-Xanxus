@@ -202,17 +202,28 @@ body {
     border: 1px solid #ddd;
 }
 
+.tableForUtilizationRange {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tableForUtilizationRange td{
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
 .restaurantsTable th {
     background-color: #f4f4f4;
     font-weight: bold;
 }
 
-.restaurantsTable tbody, .tableForAdminListRestaurants tbody{
+.restaurantsTable tbody, .tableForAdminListRestaurants tbody, .tableForUtilizationRange tbody{
     display: block;
     width: 100%;
 }
 
-.restaurantsTable thead, .restaurantsTable tbody tr {
+.restaurantsTable thead, .restaurantsTable tbody tr{
     display: table;
     width: 100%;
     table-layout: fixed; 
@@ -223,10 +234,15 @@ body {
 }
 
 .container-list-admin {
-    max-height: 200px;
+    max-height: 300px;
     overflow-x: hidden;
     padding: 0 10px;
     overflow-y: auto;
+}
+
+.container-utilization {
+    height: 300px;
+    padding: 20px;
 }
 
 .container-list-cust {

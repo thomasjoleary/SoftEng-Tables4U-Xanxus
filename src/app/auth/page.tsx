@@ -4,6 +4,7 @@ import axios from 'axios'
 
 import './styles.css'
 import { create } from 'domain'
+import { Datetime } from '../../datetime'
 import { Model } from '../../model'
 import { useRouter } from 'next/navigation'
 
@@ -20,6 +21,10 @@ export default function Login() {
   const [tables, setTables] = React.useState<{ number: number; seats: number}[]>([])
   const [openingTime, setOpeningTime] = React.useState(0)
   const [closingTime, setClosingTime] = React.useState(24)
+  const [utilizationRest, setUtilizationRest] = React.useState<{ rid: string; name: string; address: string}>({ rid: "", name:"", address:""})
+  const [utilizationFrom, setUtilizationFrom] = React.useState("")
+  const [utilizationTo, setUtilizationTo] = React.useState("")
+  const [report, setReport] = React.useState<{ date : string; time : string; unused : number; utilization : number; availability : number }[]>([])
 
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {
@@ -236,6 +241,66 @@ export default function Login() {
 
   function editRestPageClick() {
     updateCurrentSettings()
+  }
+
+  function utilizationButtonClick(rid : string, name : string, address : string, active : number) {
+    if (active === 0) {
+      alert("That restaurant isn't active!")
+      return
+    }
+
+    setUtilizationRest({rid, name, address})
+
+    model.setPath("Utilization Range Set")
+    andRefreshDisplay()
+  }
+
+  async function utilizationSubmit( event:React.MouseEvent ) {
+    event.preventDefault()
+
+    let from = new Datetime(utilizationFrom)
+    let to = new Datetime(utilizationTo)
+    
+    let res
+    try {
+      // send post request
+      const response = await axios.post(
+
+        gateway.concat("generateAvailabilityReport"),//!!!
+  
+        {
+          body: {
+            rid : utilizationRest.rid,
+            startmonth : from.month,
+            startday : from.day,
+            startyear : from.year,
+            starttime : from.hour,
+            endmonth : to.month,
+            endday : to.day,
+            endyear : to.year,
+            endtime : to.hour
+          }
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    let rep = []
+    for (let i = 0; i < res.report.length; i += 1) {
+      let date = `${res.report[i].time.month}/${res.report[i].time.day}/${res.report[i].time.year}`
+      rep.push({ date : date, time : res.report[i].time.hour, unused : res.report[i].unusedSeats, utilization : res.report[i].utilization.toFixed(2), availability : res.report[i].availability.toFixed(2) })
+    }
+    console.log(rep)
+    setReport(rep)
+
+    model.setPath("Utilization Report")
+
   }
 
   function updateCurrentSettings() {
@@ -588,43 +653,105 @@ export default function Login() {
         </div>
       ) : null}
 
-        {model.isPath("Admin List Restaurants") ? (
+      {model.isPath("Admin List Restaurants") ? (
+
+        <div className='container'>
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+          <p className="subheader"> Welcome, Admin!</p>
+          <p className="subtext">List of Restaurants</p>
+          <div className="container-list-admin">
+            <table className="tableForAdminListRestaurants">
+              <tbody>
+                {restaurants.length > 0 ? (
+                  restaurants.map((restaurant, row) => (
+                    <tr className="restaurantRow" key={row}>
+                      <td>{restaurant.rid}</td>
+                      <td>{restaurant.name}</td>
+                      <td>{restaurant.address}</td>
+                      {(restaurant.active === 0) ? (
+                        <td>Inactive</td>
+                      ): <td>Active</td>}
+                      <td><button className="button cancelButton"> Cancel Reservation </button></td>
+                      <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
+                      <td><button className="button utilizationButton" onClick={() => utilizationButtonClick(restaurant.rid, restaurant.name, restaurant.address, restaurant.active)}> Utilization</button></td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2}>No restaurants available</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <script>
+            listRest()
+          </script>
+        </div>
+      ) : null}
+
+      {model.isPath("Utilization Range Set") ? (
 
           <div className='container'>
             <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
-
-            <p className="subheader"> Welcome, Admin!</p>
-            <p className="subtext">List of Restaurants</p>
-            <div className="container-list-admin">
-              <table className="tableForAdminListRestaurants">
-                <tbody>
-                  {restaurants.length > 0 ? (
-                    restaurants.map((restaurant, row) => (
-                      <tr className="restaurantRow" key={row}>
-                        <td>{restaurant.rid}</td>
-                        <td>{restaurant.name}</td>
-                        <td>{restaurant.address}</td>
-                        {(restaurant.active === 0) ? (
-                          <td>Inactive</td>
-                        ): <td>Active</td>}
-                        <td><button className="button cancelButton"> Cancel Reservation </button></td>
-                        <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
-                        <td><button className="button utilizationButton"> Utilization</button></td>
-                      </tr>
-                    ))
-                  ) : (
+            <p className="subheader"> Set Utilization Report Range</p>
+            <form>
+              <div className="container-utilization">
+                <table className="tableForUtilizationRange">
+                  <tbody>
                     <tr>
-                      <td colSpan={2}>No restaurants available</td>
+                      <td>From:</td>
+                      <td><input type="datetime-local" value={utilizationFrom} onChange={(e) => setUtilizationFrom(e.target.value)}></input></td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-            <script>
-              listRest()
-            </script>
+                    <tr>
+                      <td>To:</td>
+                      <td><input type="datetime-local" min={utilizationFrom} value={utilizationTo} onChange={(e) => setUtilizationTo(e.target.value)}></input></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button type="submit" className="wide button" onClick={(e) => utilizationSubmit(e)}>Submit</button>
+              </div>
+            </form>
           </div>
-        ) : null}
+      ) : null}
+
+      {model.isPath("Utilization Report") ? (
+
+        <div className='container'>
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+          <p className="subheader">Report for {utilizationRest.name}</p>
+          <div className="container-list-admin">
+            <table className="tableForAdminListRestaurants">
+              <tbody>
+                <tr>
+                  <td>Date</td>
+                  <td>Hour</td>
+                  <td>Unused Seats</td>
+                  <td>Utilization</td>
+                  <td>Availability</td>
+                </tr>
+                {report.length > 0 ? (
+                  report.map((hour, row) => (
+                    <tr className="reportRow" key={row}>
+                      <td>{hour.date}</td>
+                      <td>{hour.time}</td>
+                      <td>{hour.unused}</td>
+                      <td>{`${hour.utilization}%`}</td>
+                      <td>{`${hour.availability}%`}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2}>No report available.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : null}
 
         {model.isPath("Admin Delete Restaurant") ? (
 
