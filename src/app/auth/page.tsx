@@ -20,6 +20,29 @@ export default function Login() {
   const [tables, setTables] = React.useState<{ number: number; seats: number}[]>([])
   const [openingTime, setOpeningTime] = React.useState(0)
   const [closingTime, setClosingTime] = React.useState(24)
+  const hours = Array.from({length: 24}, (_, i) => i)
+  const availabilitytables = Array(tables.length).fill(0).map((_, i) => i + 1)
+  const [availSET, setAvailSet] = React.useState(0)
+
+  const today = new Date()
+  const todayyear = today.getFullYear()
+  const todaymonth = today.getMonth() + 1
+  const todayday = today.getDate()
+  
+  const [availability, setAvailability] = React.useState<boolean[][]>([])
+
+  React.useEffect(() => {
+    if (tables.length > 0) {
+      console.log("first useeffect has been triggered")
+      setAvailability(tables.map(() => Array(24).fill(true)))
+      setAvailSet(1)
+      console.log("first useeffect has finished")
+    }
+  }, [tables])
+
+  React.useEffect(() => {
+    console.log("Current availability (after reset in the USEEFFECT):", availability)
+}, [availability])
 
   // helper function that forces React app to redraw whenever this is called.
   function andRefreshDisplay() {
@@ -141,6 +164,7 @@ export default function Login() {
     event.preventDefault()
     let res
     console.log(riddata)
+    updateCurrentSettings()
     try {
       // send post request
       const response = await axios.post(
@@ -235,10 +259,11 @@ export default function Login() {
   }
 
   function editRestPageClick() {
-    updateCurrentSettings()
+    model.setPath("Edit Restaurant")
+    andRefreshDisplay()
   }
 
-  function updateCurrentSettings() {
+  async function updateCurrentSettings () {
     console.log("updateCurrentSettings() called")
     axios.post(`${gateway}getRestaurantInformation`, { body: JSON.stringify({ rid: riddata }) })
       .then(response => {
@@ -251,11 +276,20 @@ export default function Login() {
             setOpeningTime(openingTime)
             const closingTime= data.closingTime
             setClosingTime(closingTime)
-            const tables = data.tables.map((table: { tid: string; seats: number }) => ({
+            if (data.tables){
+              const tables = data.tables.map((table: { tid: string; seats: number }) => ({
               number: table.tid,
-              seats: table.seats,
-            }))
-            setTables(tables)
+              seats: table.seats,}))
+              if(!availSET){
+                setTables(tables)
+                console.log("set the tables")
+                setAvailability(tables.map(() => Array(24).fill(true)))
+                console.log("availability set to true from inside updateCurrentSettings")
+                andRefreshDisplay()
+              }
+            }
+          
+            
           }
           else {
             alert("No response data received.")
@@ -271,9 +305,6 @@ export default function Login() {
         alert("An error occurred while updating the restaurant.")
         console.error("Error updating restaurant:", error)
       })
-
-    model.setPath("Edit Restaurant")
-    andRefreshDisplay()
   }
 
 
@@ -297,6 +328,19 @@ export default function Login() {
     andRefreshDisplay()
   }
 
+  function toRestaurantAvailability(year : number, month : number, day : number) {
+    console.log(`dates passed from the html is ${year}-${month}-${day}, about to send it to the STATE`)
+    initAvailability(year, month, day)
+    andRefreshDisplay()
+  }
+
+  function toSelectDate() {
+    model.setPath("Select Date")
+    andRefreshDisplay()
+  }
+
+  function setSelectDateToToday() {
+  }
 
   function activateRestPageClick() {
     model.setPath("Activate Restaurant")
@@ -345,7 +389,80 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  
+  const getCellStyle = (tableNum: number, hour: number, currentAvailability: boolean[][]) => {
+    if (hour < openingTime || hour > closingTime) return 'bg-black-500 dark:bg-black-700'
+    if(availability[tableNum-1] && availability[tableNum-1][hour] !== undefined){
+      if (availability[tableNum-1][hour]) {
+        return 'bg-green-500 dark:bg-green-700'
+      }
+      
+    }
+    return 'bg-red-500 dark:bg-red-700'
+  }
+
+  const  initAvailability = async (year : number, month : number, day : number) => {
+    console.log(`dates set to ${year}-${month}-${day}, about to send it to RAR`)
+    model.setPath("Restaurant Availability Report")
+    await updateCurrentSettings()
+    populateAvailability(year, month, day)
+  }
+
+  const populateAvailability = (year : number, month : number, day : number) => {
+    console.log("populateAvailability() called")
+    console.log("Current availability:", availability)
+    
+    const resetAvailability = tables.map(() => Array(24).fill(true))
+    console.log("Current resetAvailability:", resetAvailability)
+    setAvailability(resetAvailability)
+    console.log("Current availability (RESET????):", availability)
+
+
+    const date = `${year}-${month}-${day}`
+    console.log(`date sent to axios looks like this ${date}`)
+
+    axios.post(`${gateway}getRestaurantAvailability`, { body: JSON.stringify({ rid: riddata, date: date }) })
+      .then(response => {
+        console.log("populateAvailability() got a return")
+        console.log("populateAvailability() API Response:", response)
+        if (response.status === 200) {
+          if (response.data) {
+            const data = JSON.parse(response.data.body)
+            console.log(`Parsed data looks like this:`, data)
+            console.log(`Reservations data:`, data.reservations)
+            setAvailability(tables.map(() => Array(24).fill(true)))
+            console.log("Current availability should be reset:", availability)
+            const updatedAvailability = tables.map(() => Array(24).fill(true))
+            console.log("Current updatedAvailability:", updatedAvailability)
+            data.reservations.forEach((reservation: any) => {
+              console.log("enteredReservationLoop")
+              const { tid, time } = reservation
+              console.log(`tid is ${tid}, time is ${time}`)
+              updatedAvailability[tid - 1][time] = false
+              console.log("New UNCHANGED Current availability:", updatedAvailability)
+            })
+            console.log("left the loop, updatedAvailability is:", updatedAvailability)
+            setAvailability(updatedAvailability)
+            console.log("availability reset")
+            console.log("New Current availability:", availability)
+            andRefreshDisplay()
+
+          }
+          else {
+            alert("No response data received.")
+            console.error("No data in response:", response)
+          }
+        } 
+        else {
+          alert("Failed to create restaurant. Please try again.")
+          console.error("Unexpected response:", response)
+        }
+      })
+      .catch(error => {
+        alert("An error occurred while updating the restaurant.")
+        console.error("Error updating restaurant:", error)
+      })
+  }
+
   const addTable = () => {
     setTables((prevTables) => [
       ...prevTables, { number: prevTables.length + 1, seats: 3},
@@ -463,7 +580,7 @@ function generateAvailabilityReport(){
       {model.isPath("Manage Activated") ? (
         <div className="container">
           <p className="subheader">Welcome back, {restName}</p>
-          <button className="wide button">Show Availability</button>
+          <button className="wide button" onClick={() => toSelectDate()}>Show Availability</button>
           <button className="wide button">Manage Closed Days</button>
           <button className="bold wide button" onClick={() => deleteRestManagerPageClickFromActive()}>Delete Restaurant</button>
         </div>
@@ -484,6 +601,113 @@ function generateAvailabilityReport(){
           <button className="wide button" onClick={() => backToActivatedHome()}>Go to Activated Home</button>
         </div>
       ) : null}
+
+      {model.isPath("Restaurant Availability Report") ? (
+        <div className="container mx-auto p-4">
+        
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-[1000px]">
+            <thead>
+              <tr>
+                <th className="border p-2 bg-gray-200 dark:bg-gray-700 sticky left-0 z-10">Time</th>
+                {availabilitytables.map((availabilitytables, columnIndex) => (
+                  <th key={availabilitytables} className="border p-2 bg-gray-200 dark:bg-gray-700 min-w-[100px]">
+                    {availabilitytables}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {hours.map((hour, rowIndex) => (
+                <tr key={hour}>
+                  <td className="border p-2 text-center sticky left-0 bg-white dark:bg-gray-800 z-10">
+                    {hour.toString().padStart(2, '0')}:00
+                  </td>
+                  {availabilitytables.map((availabilitytables, columnIndex) => (
+                    <td 
+                      key={`${availabilitytables}-${hour}`}
+                      className={`border p-2 text-center min-w-[100px] 
+                        ${getCellStyle(columnIndex + 1, rowIndex, availability)}`}
+                    >
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <button className="wide button" onClick={() => backToActivatedHome()}>Go Back</button>
+      </div>
+      ) : null}
+
+      {model.isPath("Select Date") ? (
+       <div className="input searchRestaurants container-select-date">
+        <br></br>
+       <select id="dropdown year-search all">
+           <option value="">Year</option>
+           <option value="2024">2024</option>
+           <option value="2025">2025</option>
+       </select>
+        
+       <select id="dropdown month-search all">
+           <option value="">Month</option>
+           <option value="1">1</option>
+           <option value="2">2</option>
+           <option value="3">3</option>
+           <option value="4">4</option>
+           <option value="5">5</option>
+           <option value="6">6</option>
+           <option value="7">7</option>
+           <option value="8">8</option>
+           <option value="9">9</option>
+           <option value="10">10</option>
+           <option value="11">11</option>
+           <option value="12">12</option>
+       </select>
+
+       <select id="dropdown day-search all">
+           <option value="">Day</option>
+           <option value="1">1</option>
+           <option value="2">2</option>
+           <option value="3">3</option>
+           <option value="4">4</option>
+           <option value="5">5</option>
+           <option value="6">6</option>
+           <option value="7">7</option>
+           <option value="8">8</option>
+           <option value="9">9</option>
+           <option value="10">10</option>
+           <option value="11">11</option>
+           <option value="12">12</option>
+           <option value="13">13</option>
+           <option value="14">14</option>
+           <option value="15">15</option>
+           <option value="16">16</option>
+           <option value="17">17</option>
+           <option value="18">18</option>
+           <option value="19">19</option>
+           <option value="20">20</option>
+           <option value="21">21</option>
+           <option value="22">22</option>
+           <option value="23">23</option>
+           <option value="24">24</option>
+           <option value="25">25</option>
+           <option value="26">26</option>
+           <option value="27">27</option>
+           <option value="28">28</option>
+           <option value="29">29</option>
+           <option value="30">30</option>
+           <option value="31">31</option>
+       </select>
+       <br></br>
+       <button className="wide button center-test" onClick={() => toRestaurantAvailability(
+    (parseInt((document.getElementById("dropdown year-search all") as HTMLSelectElement).value)),
+    (parseInt((document.getElementById("dropdown month-search all") as HTMLSelectElement).value)),
+    (parseInt((document.getElementById("dropdown day-search all") as HTMLSelectElement).value))
+  )}> Find availability for this day </button>
+      </div>
+      
+       ) : null}
 
       {model.isPath("Edit Restaurant") ? (
         //the <> here is required for some stupid reason, don't remove it
