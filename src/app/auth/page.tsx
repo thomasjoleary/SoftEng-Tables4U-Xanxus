@@ -330,7 +330,7 @@ export default function Login() {
 
 
 
-  async function updateCurrentSettings () 
+  async function updateCurrentSettings () {
     console.log("updateCurrentSettings() called")
     axios.post(`${gateway}getRestaurantInformation`, { body: JSON.stringify({ rid: riddata }) })
       .then(response => {
