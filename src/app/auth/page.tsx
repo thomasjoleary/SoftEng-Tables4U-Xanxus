@@ -565,9 +565,6 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  function setSelectDateToToday() {
-  }
-
   function activateRestPageClick() {
     model.setPath("Activate Restaurant")
     andRefreshDisplay()
@@ -716,15 +713,6 @@ export default function Login() {
     setClosingTime(Number(event.target.value))
   }
 
-  //the new html functions for the remainder of admin functions
-  function cancelReservationAdminClick(rid: string) {
-    model.setPath("Cancel Reservation Admin") //for the HTML itself, you need to enter a particular reservation ID instead of seeing a dropdown
-    setriddata(rid)
-    andRefreshDisplay()
-  }
-  function cancelReservationAdmin() {
-    //lambda goes here
-  }
 
   return (
     <div className="container">
