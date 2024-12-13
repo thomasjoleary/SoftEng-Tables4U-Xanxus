@@ -26,9 +26,9 @@ body {
 
 .button {
     padding: 10px 20px;
-    font-size: 25px;
+    font-size: px;
     cursor: pointer;
-    background: whitesmoke;
+    background: rgb(63, 0, 83);
 }
 
 .owner-link {
@@ -135,7 +135,7 @@ body {
 .add-remove-row {
     position: sticky;
     bottom: 0;
-    background-color: white;
+    background-color: rgb(184, 0, 0);
     padding: 10px;
     z-index: 1;
     display: flex;
@@ -276,4 +276,8 @@ body {
     padding: 0 10px;
     height: 500px;
     overflow-y: auto;
+}
+
+.black-text{
+    color: black;
 }

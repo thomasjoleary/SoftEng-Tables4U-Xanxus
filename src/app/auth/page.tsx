@@ -894,7 +894,7 @@ function cancelReservationAdmin(){
     (parseInt((document.getElementById("dropdown closed-year-search all") as HTMLSelectElement).value)),
     (parseInt((document.getElementById("dropdown closed-month-search all") as HTMLSelectElement).value)),
     (parseInt((document.getElementById("dropdown closed-day-search all") as HTMLSelectElement).value))
-    )}>Add Closed Day</button><br></br>
+    )}>Add Closed Day</button><br></br><br></br>
             <button className="wide button" onClick={() => backToActivatedHome()}>Go Back</button>
           </div>
         </div>
@@ -1012,7 +1012,7 @@ function cancelReservationAdmin(){
         <><div className="container">
           <h2 className="subheader">Editing {restName}</h2><br></br>
           <label htmlFor="hours" className="subtext">Hours</label><br></br>
-          <select id="hours" className="subtext" name="hours" value={openingTime} onChange={handleOpenChange}>
+          <select id="hours" className="subtext black-text" name="hours" value={openingTime} onChange={handleOpenChange}>
             <option value="0">Time</option>
             <option value="0">0</option>
             <option value="1">1</option>
@@ -1040,7 +1040,7 @@ function cancelReservationAdmin(){
             <option value="23">23</option>
           </select>
           <span className="subtext">  to  </span>
-          <select id="end-hours" className="subtext" name="end-hours" value={closingTime} onChange={handleCloseChange}>
+          <select id="end-hours" className="subtext black-text" name="end-hours" value={closingTime} onChange={handleCloseChange}>
             <option value="24">Time</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -1075,7 +1075,7 @@ function cancelReservationAdmin(){
                 {tables.sort((a, b) => a.number - b.number).map((table) => (
                   <div key={table.number} className="table-entry">
                     <label htmlFor ={`table${table.number}`} className="subtext">Table {table.number} </label>
-                    <label className="subtext dark:bg-gray-200" htmlFor={`table${table.number}`}> &nbsp;{table.seats}&nbsp;</label>&nbsp;
+                    <label className="subtext dark:bg-gray-200 black-text" htmlFor={`table${table.number}`}> &nbsp;{table.seats}&nbsp;</label>&nbsp;
                     <span className="subtext"> seats </span>
                     <button
                       className="table-plus subtext button"
