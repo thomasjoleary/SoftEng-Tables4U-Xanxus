@@ -331,7 +331,7 @@ export default function Consumer() {
                 <div className='container'>
                     <p className="subheader"> Welcome, Customer!</p>
 
-                    <button className="button allRestaurants" onClick={() => listRestaurantsPageClick()}> List All Restaurants</button>
+                    <button className="cust-button allRestaurants" onClick={() => listRestaurantsPageClick()}> List All Restaurants</button>
 
                     <div className="input searchRestaurants">
                         <select id="dropdown year-search all">
@@ -432,7 +432,7 @@ export default function Consumer() {
                             <option value="8">8</option>
                         </select>
 
-                        <button className="button searchRestaurants" onClick={() => searchRestaurantsPageClick()}> Search Available Restaurants </button>
+                        <button className="cust-button searchRestaurants" onClick={() => searchRestaurantsPageClick()}> Search Available Restaurants </button>
                     </div>
 
 
@@ -536,12 +536,12 @@ export default function Consumer() {
 
 
                         <input className="input restaurantName" type="text" placeholder="Enter Restaurant Name" />
-                        <button className="button findTable" onClick={() => findTablePageClick()}> Find Table for Specific Restaurant </button>
+                        <button className="cust-button findTable" onClick={() => findTablePageClick()}> Find Table for Specific Restaurant </button>
                     </div>
 
                     <div className="bottom-buttons-container">
-                        <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
-                        <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+                        <button className="cust-button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
+                        <button className="cust-button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     </div>
                 </div>
             ) : null}
@@ -643,7 +643,7 @@ export default function Consumer() {
                                                 <td>{table.address}</td>
                                                 <td>{table.tableID}</td>
                                                 <td>{table.seats}</td>
-                                                <td><button className="button reserveButton" onClick={() => custInputForReservationPageClick(table.tableID)}> Make Reservation </button></td>
+                                                <td><button className="cust-button reserveButton" onClick={() => custInputForReservationPageClick(table.tableID)}> Make Reservation </button></td>
                                             </tr>
                                         ))
                                     ) : (
@@ -723,8 +723,8 @@ export default function Consumer() {
                     <p className="subtext"> You have succesfully made your reservation! </p>
                     <p className="subtext"> This is your reservation ID. Use it to view or cancel this reservation.</p>
                     <p className="subheader">{rvid}</p>
-                    <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
-                    <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+                    <button className="cust-button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
+                    <button className="cust-button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
