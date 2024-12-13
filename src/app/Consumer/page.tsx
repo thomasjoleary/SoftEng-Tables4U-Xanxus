@@ -287,17 +287,16 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-    function viewReservationPageClick(rvid: string) {
+    function viewReservationPageClick() {
         console.log("clicking viewing reservation")
-        setRVID(rvid)
-        //viewReservation()
+        viewReservation()
         model.setPath("View Reservation")
         andRefreshDisplay()
     }
 
 
-    function viewReservation() {
-        const rvid = (document.querySelector('input[placeholder="Enter confirmation code"]') as HTMLInputElement)?.value;
+    async function viewReservation() {
+
         if (!rvid) {
             console.error("No rviddata to view")
             return
@@ -305,7 +304,7 @@ export default function Consumer() {
           console.log("Attempting to view reservation with ID:", rvid)
       
           //send post request
-          axios.post(`${gateway}findExistingReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
+          await axios.post(`${gateway}findExistingReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
       
           )
       
@@ -709,8 +708,8 @@ export default function Consumer() {
                 <div className='container'>
                     <p className="subtext"> Enter your email and confirmation code to view your reservation. </p>
                     <input className="input restaurantName" type="text" placeholder="Enter email" />
-                    <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
-                    < button className="back-btn" onClick={() => viewReservationPageClick(rvid)}>View Reservation</button>
+                    <input className="input restaurantName" type="text" placeholder="Enter confirmation code" value={rvid} onChange={(e) => setRVID(e.target.value)} />
+                    < button className="back-btn" onClick={() => viewReservationPageClick()}>View Reservation</button>
 
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
