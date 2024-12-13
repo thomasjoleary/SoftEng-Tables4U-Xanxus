@@ -21,8 +21,9 @@ export default function Consumer() {
     const [selectedTable, setSelectedTable] = React.useState("") //for table id primarily
     const [reservationDetails, setReservationDetails] = React.useState<{year: number;month: number;day: number;time: number;guests: number}>()
     const [rvid, setRVID] = React.useState("")
+    
 
-
+    
     // helper function that forces React app to redraw whenever this is called.
     function andRefreshDisplay() {
         forceRedraw(redraw + 1)
@@ -279,6 +280,8 @@ export default function Consumer() {
                 alert("There was an error making your reservation. Please try again.")
             });
 
+
+            
        // andRefreshDisplay()
     }
 
@@ -286,6 +289,8 @@ export default function Consumer() {
         model.setPath("Customer Input for Viewing")
         andRefreshDisplay()
     }
+
+
 
     function viewReservationPageClick() {
         viewReservation()
@@ -298,19 +303,44 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-    function customerInputForCancelResPageClick() {
+    function customerInputForCancelResPageClick(rvid: string) {
+        console.log("Going to delete RVID:", rvid)
+        setRVID(rvid)
         model.setPath("Customer Input for Canceling")
         andRefreshDisplay()
     }
 
-    function cancelReservationCustomerPageClick() {
-        cancelReservationCustomer()
+//im actually tweaking right now
+//what 
+//uhhhhhh
+
+    function cancelReservationCustomerPageClick(rvid: string) {
+        console.log("Selected reservation ID for deletion:", rvid)
+        
         model.setPath("Cancel Reservation Customer")
         andRefreshDisplay()
+
+
     }
 
     function cancelReservationCustomer() {
-        //lambda
+        // console.error("Beginning to cancel reservation for customer")
+        // if (!rvid) {
+        //     console.error("No rvid to delete")
+        //     return
+        // }
+        // console.log("Attempting to cancel reservation with ID:", rvid)
+
+        //parse input for rvid and guest email
+
+        //send post request
+        axios.post(`${gateway}deleteReservationCustomer`, { body: JSON.stringify({ rvid }) })
+            .then(() => {
+                console.log("Reservation canceled successfully.")
+            })
+            .catch((error) => {
+                console.error("Failed to cancel reservation", error)
+            })
         model.setPath("Successful Cancellation")
         andRefreshDisplay()
     }
@@ -320,6 +350,49 @@ export default function Consumer() {
         model.setPath("Consumer Home")
         andRefreshDisplay()
     }
+
+/*
+if (!riddata) {
+      console.error("No riddata to delete")
+      return
+    }
+    console.log("Attempting to activate restaurant with ID:", riddata)
+
+    //send post request
+    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata }) } 
+    
+    )
+    
+      .then(() => {
+        console.log("Restaurant activated successfully.")
+      })
+      .catch((error) => {
+        console.error("Failed to activate restaurant", error)
+      })
+    model.setPath("Successful Activation")
+    andRefreshDisplay()
+*/
+
+
+
+
+
+
+/*
+//cancel reservation customer
+function cancelReservationCustomerClick(){
+  model.setPath("Cancel Reservation Customer")
+  andRefreshDisplay()
+}
+
+
+function cancelReservationCustomer(rvid: string){
+  //lambda goes here
+}
+
+*/
+
+
 
     return (
 
@@ -540,8 +613,10 @@ export default function Consumer() {
                     </div>
 
                     <div className="bottom-buttons-container">
+
                         <button className="cust-button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
                         <button className="cust-button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+
                     </div>
                 </div>
             ) : null}
@@ -686,7 +761,7 @@ export default function Consumer() {
                     <p className="subtext"> Enter your email and confirmation code to cancel your reservation. </p>
                     <input className="input restaurantName" type="text" placeholder="Enter email" />
                     <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
-                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick()}>Cancel Reservation</button>
+                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick(rvid)}>Cancel Reservation</button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
@@ -723,8 +798,10 @@ export default function Consumer() {
                     <p className="subtext"> You have succesfully made your reservation! </p>
                     <p className="subtext"> This is your reservation ID. Use it to view or cancel this reservation.</p>
                     <p className="subheader">{rvid}</p>
+
                     <button className="cust-button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
                     <button className="cust-button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
