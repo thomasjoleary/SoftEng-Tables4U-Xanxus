@@ -118,28 +118,56 @@ export default function Login() {
     andRefreshDisplay()
   }
 
-  function activateRestaurant() {
 
+
+
+
+
+
+
+
+
+  
+  function activateRestaurant(riddata: string, hours: { open: number; close: number }, tables: { number: number; seats: number }[]) {
     if (!riddata) {
-      console.error("No riddata to delete")
-      return
+        console.error("No riddata to activate");
+        return;
     }
-    console.log("Attempting to activate restaurant with ID:", riddata)
+    if (!hours) {
+      alert("Hours are not set properly");
+        console.error("Your hours are not set properly");
+        return;
+    }
+    if (!tables) {
+        console.error("Tables have not been set");
+        return;
+    }
 
-    //send post request
-    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata }) }
+    console.log("Attempting to activate restaurant with ID:", riddata);
 
-    )
 
-      .then(() => {
-        console.log("Restaurant activated successfully.")
-      })
-      .catch((error) => {
-        console.error("Failed to activate restaurant", error)
-      })
-    model.setPath("Successful Activation")
-    andRefreshDisplay()
-  }
+
+    
+    // Send post request
+    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata, hours: hours, tables: tables }) }
+      )
+    .then((response) => {
+        if (response.status === 200) {
+            console.log("Restaurant activated successfully.");
+            alert("Restaurant activated successfully.");
+        } else {
+            console.error("Failed to activate restaurant:", response.data);
+            alert("Failed to activate restaurant: " + response.data.error);
+        }
+    })
+    .catch((error) => {
+        console.error("Failed to activate restaurant", error);
+        alert("Failed to activate restaurant: " + error.message);
+    });
+
+    model.setPath("Successful Activation");
+    andRefreshDisplay();
+}
 
 
   async function listRest() {
@@ -805,7 +833,7 @@ export default function Login() {
         <div className="container">
           <p className="subheader">Are you sure you want to activate {restName}?</p>
           <p className="subtext">Once you activate your restaraunt, you will not be able to un-activate it, or edit your schedule.</p>
-          <button className="bold wide button" onClick={() => activateRestaurant()}>Activate Restaurant</button>&nbsp;&nbsp;
+          <button className="bold wide button" onClick={() => activateRestaurant(riddata, { open: openingTime, close: closingTime }, tables)}>Activate Restaurant</button>&nbsp;&nbsp;
           <button className="wide button" onClick={() => backToUnactivatedHome()}>Go Back</button>
         </div>
       ) : null}

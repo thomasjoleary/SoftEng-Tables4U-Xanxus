@@ -287,100 +287,22 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-    function viewReservationPageClick() {
+    function viewReservationPageClick(rvid: string) {
         console.log("clicking viewing reservation")
         setRVID(rvid)
-        viewReservation(rvid)
+        //viewReservation()
         model.setPath("View Reservation")
         andRefreshDisplay()
     }
 
 
-
-
-/*
-import pkg from "aws-lambda";
-const { APIGatewayProxyHandler } = pkg;
-import mysql from 'mysql2/promise';
-import { v4 as uuidv4 } from 'uuid';
-
-const dbConfig = {
-    host: "restaurantdb.czcukuq6u2x1.us-east-2.rds.amazonaws.com",
-    user: "xanxus",
-    password: "XanxusRest",
-    database: "xanxus",
-    port: 3306,
-};
-
-//I stole this
-
-export const handler = async (event) => {
-    const connection = await mysql.createConnection(dbConfig);
-
-    try {
-        console.log("Function started");
-
-        // Check if active reservations exist
-        // const [reservationRows] = await connection.execute(
-        //     "SELECT rvid, name, address, activated FROM reservations WHERE activated = 1"
-        // );
-        const [reservationRows] = await connection.execute(
-                 "SELECT name, address FROM reservations WHERE activated = 1"
-             );
-
-        if (reservationRows.length === 0) {
-            return errorResponse(400, "No reservations available to list.");
-        }
-
-        console.log("Active reservations selected");
-
-        const response = {
-            reservations: reservationRows.map((reservation) => ({
-                //rvid: reservation.rvid,
-                name: reservation.name,
-                address: reservation.address,
-                //active: reservation.activated === 1, 
-            })),
-        };
-
-        console.log("Activated reservations fetched successfully");
-        return {
-            statusCode: 200,
-            body: JSON.stringify(response),
-        };
-    } catch (error) {
-        console.error("Error listing reservations:", error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: "Internal Server Error" }),
-        };
-    } finally {
-        await connection.end();
-    }
-};
-
-function errorResponse(statusCode, message) {
-    console.log(`Error: ${message}`);
-    return {
-        statusCode,
-        body: JSON.stringify({ error: message }),
-    };
-}
-
-*/
-
-
-
-
-
-
-
-    function viewReservation(rvid: string) {
+    function viewReservation() {
+        const rvid = (document.querySelector('input[placeholder="Enter confirmation code"]') as HTMLInputElement)?.value;
         if (!rvid) {
             console.error("No rviddata to view")
             return
           }
-          console.log("Attempting to view restaurant with ID:", rvid)
+          console.log("Attempting to view reservation with ID:", rvid)
       
           //send post request
           axios.post(`${gateway}findExistingReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
@@ -393,7 +315,7 @@ function errorResponse(statusCode, message) {
             .catch((error) => {
               console.error("Could Not View", error)
             })
-          model.setPath("Successful Activation")
+          model.setPath("Successful Viewing")
         
         andRefreshDisplay()
     }
@@ -404,33 +326,39 @@ function errorResponse(statusCode, message) {
     }
 
     function cancelReservationCustomerPageClick(rvid: string) {
+        if (!rvid) {
+            
+            alert("No rvid data to delete right now")
+        }
         console.log("clicking canceling reservation")
-        cancelReservationCustomer()
+        //cancelReservationCustomer()
         model.setPath("Cancel Reservation Customer")
         andRefreshDisplay()
     }
 
     function cancelReservationCustomer() {
+        const rvid = (document.querySelector('input[placeholder="Enter confirmation code"]') as HTMLInputElement)?.value;
+
         if (!rvid) {
-            console.error("No rviddata to delete")
-            return
-          }
-          console.log("Attempting to activate restaurant with ID:", rvid)
-      
-          //send post request
-          axios.post(`${gateway}deleteReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
-      
-          )
-      
+            alert("Please enter a confirmation code to cancel the reservation.");
+            console.error("No rvid data to delete here");
+            return;
+        }
+        console.log("Attempting to cancel reservation with ID:", rvid);
+
+        // Send post request
+        axios.post(`${gateway}deleteReservationCustomer`, { rvid: rvid })
             .then(() => {
-              console.log("Reservation Viewed Successfully.")
+                console.log("Reservation Canceled Successfully.");
+                alert("Reservation canceled successfully.");
             })
             .catch((error) => {
-              console.error("Could Not View", error)
-            })
-        
-        model.setPath("Successful Cancellation")
-        andRefreshDisplay()
+                console.error("Could Not Cancel", error);
+                alert("Could not cancel the reservation. Please try again.");
+            });
+
+        model.setPath("Successful Cancellation");
+        andRefreshDisplay();
     }
 
 
@@ -782,7 +710,7 @@ function errorResponse(statusCode, message) {
                     <p className="subtext"> Enter your email and confirmation code to view your reservation. </p>
                     <input className="input restaurantName" type="text" placeholder="Enter email" />
                     <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
-                    < button className="back-btn" onClick={() => viewReservationPageClick()}>View Reservation</button>
+                    < button className="back-btn" onClick={() => viewReservationPageClick(rvid)}>View Reservation</button>
 
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
@@ -791,7 +719,7 @@ function errorResponse(statusCode, message) {
             {model.isPath("View Reservation") ? (
                 <div className='container'>
                     <p className="subheader"> Your Reservation: </p>
-                    <p className="subtext">Restaurant name placeholder</p>
+                    <p className="subtext">Restaurant placeholder</p>
                     <p className="subtext">Time placeholder</p>
                     <p className="subtext">Table placeholder</p>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
