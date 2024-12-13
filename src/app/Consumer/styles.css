@@ -24,11 +24,10 @@ body {
 }
 
 .cust-button {
-    padding: 2px 20px;
-    font-size: 25px;
+    padding: 10px 20px;
+    font-size: px;
     cursor: pointer;
-    background-color: whitesmoke;
-    color: #909090;
+    background: rgb(63, 0, 83);
 }
 
 .owner-link {
