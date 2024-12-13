@@ -29,6 +29,8 @@ export default function Login() {
   const availabilitytables = Array(tables.length).fill(0).map((_, i) => i + 1)
   const [availSET, setAvailSet] = React.useState(0)
   const [stateClosedDays, setClosedDays] = React.useState<string[]>([])
+  const [reservationRid, setReservationRid] = React.useState("")
+  const [reservationList, setReservationList] = React.useState<{ rvid : string; guestEmail : string; numGuests : number; date : string; time : number }[]>([])
 
   const today = new Date()
   const todayyear = today.getFullYear()
@@ -292,7 +294,7 @@ export default function Login() {
       // send post request
       const response = await axios.post(
 
-        gateway.concat("generateAvailabilityReport"),//!!!
+        gateway.concat("generateAvailabilityReport"),
   
         {
           body: {
@@ -326,6 +328,40 @@ export default function Login() {
     setReport(rep)
 
     model.setPath("Utilization Report")
+    andRefreshDisplay()
+
+  }
+
+  async function cancelResPageClick( rid : string) {
+
+    setReservationRid(rid)
+
+    let res
+
+    try {
+      // send post request
+      const response = await axios.post(
+
+        gateway.concat("listReservations"),
+  
+        {
+          body: {
+            rid : rid
+          }
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    setReservationList(res)
+    model.setPath("Admin List Reservations")
+    andRefreshDisplay()
 
   }
 
@@ -391,7 +427,36 @@ export default function Login() {
       .catch(error => {
         alert("An error occurred adding closed day.")
         console.error("Error updating restaurant:", error)
-      })
+      })}
+  async function adminCancelReservation( rvid : string ) {
+
+    let res
+
+    try {
+      // send post request
+      const response = await axios.post(
+
+        gateway.concat("cancelReservationAdmin"),
+  
+        {
+          body: {
+            rvid : rvid
+          }
+        }
+
+      )
+      // set res to the body json, parsed
+      res = JSON.parse(response.data.body)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+      return
+    }
+
+    alert("Reservation Deleted Successfully")
+    
+    cancelResPageClick(reservationRid)
+
   }
 
   function openDay (date : string) {
@@ -1087,7 +1152,7 @@ function cancelReservationAdmin(){
                       {(restaurant.active === 0) ? (
                         <td>Inactive</td>
                       ): <td>Active</td>}
-                      <td><button className="button cancelButton"> Cancel Reservation </button></td>
+                      <td><button className="button cancelButton" onClick={() => cancelResPageClick(restaurant.rid)}> Cancel Reservation </button></td>
                       <td><button className="button deleteButton" onClick={() => deleteRestPageClick(restaurant.rid)}> Delete </button></td>
                       <td><button className="button utilizationButton" onClick={() => utilizationButtonClick(restaurant.rid, restaurant.name, restaurant.address, restaurant.active)}> Utilization</button></td>
                     </tr>
@@ -1169,6 +1234,47 @@ function cancelReservationAdmin(){
           </div>
         </div>
         ) : null}
+
+      {model.isPath("Admin List Reservations") ? (
+
+        <div className='container'>
+          <button className="tables4u" onClick={() => router.push('/')}>Tables4U</button>
+
+          <p className="subheader">List of Reservations</p>
+          <div className="container-list-admin">
+            <table className="tableForAdminListRestaurants">
+              <tbody>
+                <tr>
+                  <td>Reservation ID</td>
+                  <td>Guest Email</td>
+                  <td>Number of Guests</td>
+                  <td>Date</td>
+                  <td>Time</td>
+                  <td></td>
+                </tr>
+                {reservationList.length > 0 ? (
+                  reservationList.map((rv, row) => (
+                    <tr className="reportRow" key={row}>
+                      <td>{rv.rvid}</td>
+                      <td>{rv.guestEmail}</td>
+                      <td>{rv.numGuests}</td>
+                      <td>{`${rv.date}%`}</td>
+                      <td>{`${rv.time}%`}</td>
+                      <td>
+                        <button onClick={() => adminCancelReservation(rv.rvid)}>Cancel</button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={2}>No report available.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : null}
 
         {model.isPath("Admin Delete Restaurant") ? (
 
