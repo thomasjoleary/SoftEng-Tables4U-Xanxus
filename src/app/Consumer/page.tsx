@@ -290,6 +290,8 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
+
+
     function viewReservationPageClick() {
         viewReservation()
         model.setPath("View Reservation")
@@ -301,7 +303,9 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-    function customerInputForCancelResPageClick() {
+    function customerInputForCancelResPageClick(rvid: string) {
+        console.log("Going to delete RVID:", rvid)
+        setRVID(rvid)
         model.setPath("Customer Input for Canceling")
         andRefreshDisplay()
     }
@@ -310,7 +314,7 @@ export default function Consumer() {
 //what 
 //uhhhhhh
 
-    function cancelReservationCustomerPageClick() {
+    function cancelReservationCustomerPageClick(rvid: string) {
         console.log("Selected reservation ID for deletion:", rvid)
         
         model.setPath("Cancel Reservation Customer")
@@ -320,12 +324,14 @@ export default function Consumer() {
     }
 
     function cancelReservationCustomer() {
-        console.error("Beginning to cancel reservation for customer")
-        if (!rvid) {
-            console.error("No rvid to delete")
-            return
-        }
-        console.log("Attempting to cancel reservation with ID:", rvid)
+        // console.error("Beginning to cancel reservation for customer")
+        // if (!rvid) {
+        //     console.error("No rvid to delete")
+        //     return
+        // }
+        // console.log("Attempting to cancel reservation with ID:", rvid)
+
+        //parse input for rvid and guest email
 
         //send post request
         axios.post(`${gateway}deleteReservationCustomer`, { body: JSON.stringify({ rvid }) })
@@ -608,7 +614,7 @@ function cancelReservationCustomer(rvid: string){
 
                     <div className="bottom-buttons-container">
                         <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
-                        <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+                        <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick(rvid)}> Cancel Reservation </button>
                     </div>
                 </div>
             ) : null}
@@ -753,7 +759,7 @@ function cancelReservationCustomer(rvid: string){
                     <p className="subtext"> Enter your email and confirmation code to cancel your reservation. </p>
                     <input className="input restaurantName" type="text" placeholder="Enter email" />
                     <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
-                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick()}>Cancel Reservation</button>
+                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick(rvid)}>Cancel Reservation</button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
@@ -791,7 +797,7 @@ function cancelReservationCustomer(rvid: string){
                     <p className="subtext"> This is your reservation ID. Use it to view or cancel this reservation.</p>
                     <p className="subheader">{rvid}</p>
                     <button className="button viewReservation" onClick={() => customerInputForViewResPageClick()}> View Reservation </button>
-                    <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick()}> Cancel Reservation </button>
+                    <button className="button cancelReservation" onClick={() => customerInputForCancelResPageClick(rvid)}> Cancel Reservation </button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
