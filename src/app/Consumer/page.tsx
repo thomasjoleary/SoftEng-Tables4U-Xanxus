@@ -288,13 +288,113 @@ export default function Consumer() {
     }
 
     function viewReservationPageClick() {
-        viewReservation()
+        console.log("clicking viewing reservation")
+        setRVID(rvid)
+        viewReservation(rvid)
         model.setPath("View Reservation")
         andRefreshDisplay()
     }
 
-    function viewReservation() {
-        //lambda
+
+
+
+/*
+import pkg from "aws-lambda";
+const { APIGatewayProxyHandler } = pkg;
+import mysql from 'mysql2/promise';
+import { v4 as uuidv4 } from 'uuid';
+
+const dbConfig = {
+    host: "restaurantdb.czcukuq6u2x1.us-east-2.rds.amazonaws.com",
+    user: "xanxus",
+    password: "XanxusRest",
+    database: "xanxus",
+    port: 3306,
+};
+
+//I stole this
+
+export const handler = async (event) => {
+    const connection = await mysql.createConnection(dbConfig);
+
+    try {
+        console.log("Function started");
+
+        // Check if active reservations exist
+        // const [reservationRows] = await connection.execute(
+        //     "SELECT rvid, name, address, activated FROM reservations WHERE activated = 1"
+        // );
+        const [reservationRows] = await connection.execute(
+                 "SELECT name, address FROM reservations WHERE activated = 1"
+             );
+
+        if (reservationRows.length === 0) {
+            return errorResponse(400, "No reservations available to list.");
+        }
+
+        console.log("Active reservations selected");
+
+        const response = {
+            reservations: reservationRows.map((reservation) => ({
+                //rvid: reservation.rvid,
+                name: reservation.name,
+                address: reservation.address,
+                //active: reservation.activated === 1, 
+            })),
+        };
+
+        console.log("Activated reservations fetched successfully");
+        return {
+            statusCode: 200,
+            body: JSON.stringify(response),
+        };
+    } catch (error) {
+        console.error("Error listing reservations:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Internal Server Error" }),
+        };
+    } finally {
+        await connection.end();
+    }
+};
+
+function errorResponse(statusCode, message) {
+    console.log(`Error: ${message}`);
+    return {
+        statusCode,
+        body: JSON.stringify({ error: message }),
+    };
+}
+
+*/
+
+
+
+
+
+
+
+    function viewReservation(rvid: string) {
+        if (!rvid) {
+            console.error("No rviddata to view")
+            return
+          }
+          console.log("Attempting to view restaurant with ID:", rvid)
+      
+          //send post request
+          axios.post(`${gateway}findExistingReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
+      
+          )
+      
+            .then(() => {
+              console.log("Reservation Viewed Successfully.")
+            })
+            .catch((error) => {
+              console.error("Could Not View", error)
+            })
+          model.setPath("Successful Activation")
+        
         andRefreshDisplay()
     }
 
@@ -303,14 +403,32 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-    function cancelReservationCustomerPageClick() {
+    function cancelReservationCustomerPageClick(rvid: string) {
+        console.log("clicking canceling reservation")
         cancelReservationCustomer()
         model.setPath("Cancel Reservation Customer")
         andRefreshDisplay()
     }
 
     function cancelReservationCustomer() {
-        //lambda
+        if (!rvid) {
+            console.error("No rviddata to delete")
+            return
+          }
+          console.log("Attempting to activate restaurant with ID:", rvid)
+      
+          //send post request
+          axios.post(`${gateway}deleteReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
+      
+          )
+      
+            .then(() => {
+              console.log("Reservation Viewed Successfully.")
+            })
+            .catch((error) => {
+              console.error("Could Not View", error)
+            })
+        
         model.setPath("Successful Cancellation")
         andRefreshDisplay()
     }
@@ -686,7 +804,7 @@ export default function Consumer() {
                     <p className="subtext"> Enter your email and confirmation code to cancel your reservation. </p>
                     <input className="input restaurantName" type="text" placeholder="Enter email" />
                     <input className="input restaurantName" type="text" placeholder="Enter confirmation code" />
-                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick()}>Cancel Reservation</button>
+                    < button className="back-btn" onClick={() => cancelReservationCustomerPageClick(rvid)}>Cancel Reservation</button>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
