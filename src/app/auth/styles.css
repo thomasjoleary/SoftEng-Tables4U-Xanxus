@@ -8,11 +8,6 @@ body {
     text-align: center;
 }
 
-.header {
-    font-size: 72px;
-    font-weight: bold;
-}
-
 .subtext {
     font-size: 36px;
     margin-bottom: 20px;
@@ -29,13 +24,6 @@ body {
     font-size: px;
     cursor: pointer;
     background: rgb(59, 59, 59);
-}
-
-.owner-link {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 27px;
 }
 
 .tables4u {
@@ -63,67 +51,6 @@ body {
     font-weight: bold;
 }
 
-.schedule-tables {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.schedule {
-    width: 45%;
-}
-
-.day-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.day-row span {
-    width: 25%;
-    text-align: left;
-}
-
-.time-input {
-    width: 30%;
-    padding: 5px;
-}
-
-.tables {
-    width: 100%;
-}
-
-.table-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.seat-input {
-    width: 40px;
-    text-align: center;
-    margin: 0 5px;
-}
-
-.table-btn {
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.add-remove-row {
-    display: flex;
-    justify-content: space-evenly;
-    margin-top: 20px;
-}
-
-
-.back-btn {
-    margin-top: 30px;
-    padding: 10px 20px;
-    cursor: pointer;
-}
 
 .tables {
     max-height: 400px;
@@ -132,30 +59,6 @@ body {
     box-sizing: border-box;
 }
 
-.add-remove-row {
-    position: sticky;
-    bottom: 0;
-    background-color: rgb(184, 0, 0);
-    padding: 10px;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    width: 100%;
-}
-
-.table-btn {
-    padding: 5px 10px;
-    font-size: 16px;
-    margin: 0 5px;
-    cursor: pointer;
-}
-
-.seat-input {
-    width: 40px;
-    text-align: center;
-    margin: 0 5px;
-}
 
 .tables-wrapper {
     position: relative;
@@ -169,21 +72,7 @@ body {
     overflow-y: auto;
 }
 
-/* for customer home page */
-
-.bottom-buttons-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px; 
-    margin-top: 20px; 
-}
-
-.allRestaurants{
-    margin-bottom: 20px;
-}
-
-.input.searchRestaurants select, .input.restaurantName,
-.input.findTable select {
+.input.searchRestaurants select {
     height: 40px; 
     width: 150px;
     padding: 10px 20px; 
@@ -191,15 +80,14 @@ body {
     border-radius: 0px; 
 }
 
-/* listing restaurants tables */
 
-.restaurantsTable, .tableForAdminListRestaurants {
+.tableForAdminListRestaurants {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.restaurantsTable th, .restaurantsTable td, .tableForAdminListRestaurants td {
+.tableForAdminListRestaurants td {
     padding: 12px;
     text-align: left;
     border: 1px solid #ddd;
@@ -216,28 +104,19 @@ body {
     border: 1px solid #ddd;
 }
 
-.restaurantsTable th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
 
-.restaurantsTable tbody, .tableForAdminListRestaurants tbody, .tableForUtilizationRange tbody{
+.tableForAdminListRestaurants tbody, .tableForUtilizationRange tbody{
     display: block;
     width: 100%;
 }
 
-.restaurantsTable thead, .restaurantsTable tbody tr{
-    display: table;
-    width: 100%;
-    table-layout: fixed; 
-}
 
-.restaurantsTable td, .tableForAdminListRestaurants td {
+ .tableForAdminListRestaurants td {
     width: 50%; 
 }
 
 .container-list-admin {
-    max-height: 800px;
+    max-height: 300px;
     overflow-x: hidden;
     padding: 0 10px;
     overflow-y: auto;
@@ -248,26 +127,13 @@ body {
     padding: 20px;
 }
 
-.container-list-cust {
-    max-height: 800px;
-    overflow-x: hidden;
-    padding: 0 10px;
-    overflow-y: auto;
-}
-
-.testcss {
-    all: unset;
-    color: red;
-    background: blue;
-}
-
-  .container-select-date {
+.container-select-date {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    flex-direction: column; /* Stack the dropdowns and button vertically */
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column; 
     padding: 0 10px;
-    height: 100%; /* Ensure the container takes up enough height */
+    height: 100%; 
     top: 100px;
 }
 
@@ -280,4 +146,8 @@ body {
 
 .black-text{
     color: black;
+}
+
+input[type="datetime-local"] {
+    color: black;  
 }
