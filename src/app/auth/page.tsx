@@ -802,7 +802,7 @@ function cancelReservationAdmin(){
 
         {model.isPath("Activate Restaurant") ? (
         <div className="container">
-          <p className="subheader">Are you sure you want to activate(Restaurant Name)?</p>
+          <p className="subheader">Are you sure you want to activate {restName}?</p>
           <p className="subtext">Once you activate your restaraunt, you will not be able to un-activate it, or edit your schedule.</p>
           <button className="bold wide button" onClick={() => activateRestaurant()}>Activate Restaurant</button>&nbsp;&nbsp;
           <button className="wide button" onClick={() => backToUnactivatedHome()}>Go Back</button>
@@ -1111,7 +1111,7 @@ function cancelReservationAdmin(){
 
         {model.isPath("Delete Inactive Restaurant Manager") ? (
           <div className="container">
-            <p className="subheader">Are you sure you want to delete the inactive (Restaurant Name)?</p>
+            <p className="subheader">Are you sure you want to delete the inactive {restName}?</p>
             <p className="subheader">This action cannot be undone</p>
             <button className="bold wide button" onClick={() => deleteRestaurantManager()}>Delete Restaurant</button>
             <button className="wide button" onClick={() => backToUnactivatedHome()}>Go Back</button>
@@ -1120,7 +1120,7 @@ function cancelReservationAdmin(){
 
         {model.isPath("Delete Active Restaurant Manager") ? (
         <div className="container">
-          <p className="subheader">Are you sure you want to delete the active (Restaurant Name)?</p>
+          <p className="subheader">Are you sure you want to delete the active {restName}?</p>
           <p className="subheader">This action cannot be undone</p>
           <button className="bold wide button" onClick={() => deleteRestaurantManager()}>Delete Restaurant</button>
           <button className="wide button" onClick={() => backToActivatedHome()}>Go Back</button>

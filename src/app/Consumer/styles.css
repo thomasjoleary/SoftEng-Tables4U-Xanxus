@@ -23,11 +23,12 @@ body {
     font-weight: bold;
 }
 
-.button {
-    padding: 10px 20px;
+.cust-button {
+    padding: 2px 20px;
     font-size: 25px;
     cursor: pointer;
-    background: red;
+    background-color: whitesmoke;
+    color: #909090;
 }
 
 .owner-link {
@@ -186,6 +187,7 @@ body {
     height: 40px; 
     padding: 10px 20px; 
     font-size: 18px; 
+    margin-top: 20px;
     border-radius: 0px; 
     color: #000000;
 
@@ -207,6 +209,7 @@ body {
 
 .restaurantsTable th {
     background-color: #f4f4f4;
+    color: grey;
     font-weight: bold;
 }
 
