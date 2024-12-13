@@ -831,14 +831,14 @@ function cancelReservationAdmin(){
           <div className="actions">
           <div className="input searchRestaurants container-select-date">
     <br></br>
-       <select id="dropdown closed-year-search all">
+       <select id="dropdown closed-year-search all" className="black-text">
            <option value="">Year</option>
            <option value="2024">2024</option>
            <option value="2025">2025</option>
            <option value="2026">2026</option>
        </select>
         
-       <select id="dropdown closed-month-search all">
+       <select id="dropdown closed-month-search all" className="black-text">
            <option value="">Month</option>
            <option value="1">1</option>
            <option value="2">2</option>
@@ -854,7 +854,7 @@ function cancelReservationAdmin(){
            <option value="12">12</option>
        </select>
 
-       <select id="dropdown closed-day-search all">
+       <select id="dropdown closed-day-search all" className="black-text">
            <option value="">Day</option>
            <option value="1">1</option>
            <option value="2">2</option>
@@ -941,13 +941,13 @@ function cancelReservationAdmin(){
         {model.isPath("Select Date") ? (
        <div className="input searchRestaurants container-select-date">
         <br></br>
-       <select id="dropdown year-search all">
+       <select id="dropdown year-search all" className="black-text">
            <option value="">Year</option>
            <option value="2024">2024</option>
            <option value="2025">2025</option>
        </select>
         
-       <select id="dropdown month-search all">
+       <select id="dropdown month-search all" className="black-text">
            <option value="">Month</option>
            <option value="1">1</option>
            <option value="2">2</option>
@@ -963,7 +963,7 @@ function cancelReservationAdmin(){
            <option value="12">12</option>
        </select>
 
-       <select id="dropdown day-search all">
+       <select id="dropdown day-search all" className="black-text">
            <option value="">Day</option>
            <option value="1">1</option>
            <option value="2">2</option>
