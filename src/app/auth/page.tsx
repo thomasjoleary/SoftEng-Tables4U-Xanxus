@@ -128,7 +128,7 @@ export default function Login() {
 
 
   
-  function activateRestaurant(riddata: string, hours: { open: number; close: number }, tables: { number: number; seats: number }[]) {
+  function activateRestaurant(riddata: string) {
     if (!riddata) {
         console.error("No riddata to activate");
         return;
@@ -600,6 +600,114 @@ export default function Login() {
     andRefreshDisplay()
   }
 
+  /* //THIS IS THE LAMBDA FOR ACTIVATE RESTAURANT, TEMPORARILY HOLDING IT HERE
+  import mysql from 'mysql2/promise';
+
+const dbConfig = {
+    host: "restaurantdb.czcukuq6u2x1.us-east-2.rds.amazonaws.com",
+    user: "xanxus",
+    password: "XanxusRest",
+    database: "xanxus",
+    port: 3306,
+};
+
+const errorResponse = (statusCode, message) => ({
+    statusCode,
+    body: JSON.stringify({ error: message }),
+});
+
+export const handler = async (event) => {
+    let connection = await mysql.createConnection(dbConfig);
+
+    try {
+        console.log("Function started");
+        console.log("Event:", event);
+        
+            // Parse the request body
+    const { rid} = JSON.parse(event.body || "{}"); //add stringify schedule or whatever's necessary
+    console.log(`Received data: rid=${rid}`);
+
+    // Validate required fields
+    if (!rid) {
+        console.error("Restaurant ID is missing");
+        return errorResponse(400, "This restaurant doesn’t exist.");
+    }
+    console.log("Restaurant ID is valid");
+
+
+    // Create a database connection
+    connection = await mysql.createConnection(dbConfig);
+    console.log("Database connection established");
+
+     // Check if hours are set for the restaurant
+    let [scheduleCheck] = await connection.execute(
+        'SELECT openingTime, closingTime FROM Restaurants WHERE rid = ?',
+        [rid]
+    );
+
+    if (scheduleCheck.length === 0) {
+        console.error("Restaurant not found in the database");
+        return errorResponse(400, "Restaurant not found.");
+    }
+
+   let { openingTime, closingTime } = scheduleCheck[0];
+
+    if (!openingTime) {
+        console.error("Opening hours are not set properly (CLOUDWATCH)");
+        return errorResponse(400, "There are no opening hours set.");
+    }
+    console.log("Opening hours are set correctly");
+
+    if (!closingTime) {
+        console.error("Closing hours are not set properly (CLOUDWATCH)");
+        return errorResponse(400, "There are no closing hours set.");
+    }
+    console.log("Closing hours are set correctly");
+
+
+
+    
+    /*
+    if (!tables) {
+        console.error("Tables have not been set");
+        return errorResponse(400, "There are no tables in the restaurant");
+    }
+    console.log("Tables are set correctly");
+
+
+    // Update the restaurant status to active
+    const [result] = await connection.execute(
+      'UPDATE Restaurants SET activated = ? WHERE rid = ?',
+      ["1", rid]
+  );
+  console.log(`Update result: ${JSON.stringify(result)}`);
+
+  // Check if the update was successful
+  if (result.affectedRows === 0) {
+      console.error("Restaurant not found during update");
+      return errorResponse(404, "Restaurant not found.");
+  }
+
+  // Return a success response
+  return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Restaurant activated successfully." }),
+  };
+} catch (error) {
+  console.error("Error activating restaurant:", error);
+  return errorResponse(500, "Internal Server Error");
+} finally {
+  if (connection) {
+      await connection.end();
+      console.log("Database connection closed");
+  }
+
+  
+}}
+  */
+
+
+
   function editRestaurant() {
     const startHour = parseInt((document.getElementById("hours") as HTMLSelectElement).value)
     const endHour = parseInt((document.getElementById("end-hours") as HTMLSelectElement).value)
@@ -833,7 +941,7 @@ export default function Login() {
         <div className="container">
           <p className="subheader">Are you sure you want to activate {restName}?</p>
           <p className="subtext">Once you activate your restaraunt, you will not be able to un-activate it, or edit your schedule.</p>
-          <button className="bold wide button" onClick={() => activateRestaurant(riddata, { open: openingTime, close: closingTime }, tables)}>Activate Restaurant</button>&nbsp;&nbsp;
+          <button className="bold wide button" onClick={() => activateRestaurant(riddata)}>Activate Restaurant</button>&nbsp;&nbsp;
           <button className="wide button" onClick={() => backToUnactivatedHome()}>Go Back</button>
         </div>
       ) : null}
