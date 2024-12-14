@@ -128,7 +128,7 @@ export default function Login() {
 
 
   
-  function activateRestaurant(riddata: string) {
+ async function activateRestaurant(riddata: string) {
     if (!riddata) {
         console.error("No riddata to activate");
         return;
@@ -144,28 +144,38 @@ export default function Login() {
     }
 
     console.log("Attempting to activate restaurant with ID:", riddata);
-
-
-
     
+  let res
+
     // Send post request
-    axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata, hours: hours, tables: tables }) }
+   await axios.post(`${gateway}activateRestaurant`, { body: JSON.stringify({ rid: riddata, hours: hours, tables: tables }) }
       )
     .then((response) => {
-        if (response.status === 200) {
+        if (response.data.statusCode === 200) {
             console.log("Restaurant activated successfully.");
             alert("Restaurant activated successfully.");
+            
         } else {
-            console.error("Failed to activate restaurant:", response.data);
-            alert("Failed to activate restaurant: " + response.data.error);
+            console.error("Failed to activate restaurant:", response.data.body);
+            alert("Failed to activate restaurant: " + response.data.body);
         }
+
+        let res = response.data.statusCode
+
     })
     .catch((error) => {
         console.error("Failed to activate restaurant", error);
         alert("Failed to activate restaurant: " + error.message);
     });
 
-    model.setPath("Successful Activation");
+    if (res === 200) {
+      model.setPath("Successful Activation");
+    }
+    else
+    {
+
+   model.setPath("Manage Unactivated");}
+
     andRefreshDisplay();
 }
 
