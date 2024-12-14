@@ -21,6 +21,10 @@ export default function Consumer() {
     const [selectedTable, setSelectedTable] = React.useState("") //for table id primarily
     const [reservationDetails, setReservationDetails] = React.useState<{year: number;month: number;day: number;time: number;guests: number}>()
     const [rvid, setRVID] = React.useState("")
+    const [rvemail, setRVEmail] = React.useState("")
+    const [rvName, setRVName] = React.useState("")
+    const [rvAddress, setrvAddress] = React.useState("")
+    const [rvResponse, setRVResponse] = React.useState<{ date: string; numGuests: number; rid: string; rvid: string; tid : string; time: number}>({ date: "", numGuests: 0, rid: "", rvid: "", tid: "", time: 0})
 
 
     // helper function that forces React app to redraw whenever this is called.
@@ -287,9 +291,9 @@ export default function Consumer() {
         andRefreshDisplay()
     }
 
-    function viewReservationPageClick() {
+    async function viewReservationPageClick() {
         console.log("clicking viewing reservation")
-        viewReservation()
+        await viewReservation()
         model.setPath("View Reservation")
         andRefreshDisplay()
     }
@@ -302,19 +306,26 @@ export default function Consumer() {
             return
           }
           console.log("Attempting to view reservation with ID:", rvid)
-      
+          let res
           //send post request
-          await axios.post(`${gateway}findExistingReservationCustomer`, { body: JSON.stringify({ rvid: rvid}) }
+          const response = await axios.post(`${gateway}findExistingReservation`, { body: JSON.stringify({ rvid: rvid, email: rvemail}) }
       
           )
       
-            .then(() => {
+            .then((response) => {
               console.log("Reservation Viewed Successfully.")
+              res = JSON.parse(response.data.body)
+              console.log(res)
+              setRVResponse(res[0][0])
+              console.log(res[0][0])
+              setRVName(res[1])
+              setrvAddress(res[2])
             })
             .catch((error) => {
               console.error("Could Not View", error)
             })
           model.setPath("Successful Viewing")
+          
         
         andRefreshDisplay()
     }
@@ -707,7 +718,7 @@ export default function Consumer() {
             {model.isPath("Customer Input for Viewing") ? (
                 <div className='container'>
                     <p className="subtext"> Enter your email and confirmation code to view your reservation. </p>
-                    <input className="input restaurantName" type="text" placeholder="Enter email" />
+                    <input className="input restaurantName" type="text" placeholder="Enter email" value={rvemail} onChange={(e) => setRVEmail(e.target.value)}/>
                     <input className="input restaurantName" type="text" placeholder="Enter confirmation code" value={rvid} onChange={(e) => setRVID(e.target.value)} />
                     < button className="back-btn" onClick={() => viewReservationPageClick()}>View Reservation</button>
 
@@ -718,9 +729,9 @@ export default function Consumer() {
             {model.isPath("View Reservation") ? (
                 <div className='container'>
                     <p className="subheader"> Your Reservation: </p>
-                    <p className="subtext">Restaurant placeholder</p>
-                    <p className="subtext">Time placeholder</p>
-                    <p className="subtext">Table placeholder</p>
+                    <p className="subtext">{`${rvName}, ${rvAddress}`}</p>
+                    <p className="subtext">{`${rvResponse.time}:00, ${rvResponse.date.substring(0, 10)}`}</p>
+                    <p className="subtext">{`Table ${rvResponse.tid}`}</p>
                     < button className="back-btn" onClick={() => backToConsumerHome()}>Go Back</button> </div>
             ) : null}
 
