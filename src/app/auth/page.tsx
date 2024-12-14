@@ -160,7 +160,7 @@ export default function Login() {
             alert("Failed to activate restaurant: " + response.data.body);
         }
 
-        let res = response.data.statusCode
+        res = response.data.statusCode
 
     })
     .catch((error) => {
@@ -170,11 +170,9 @@ export default function Login() {
 
     if (res === 200) {
       model.setPath("Successful Activation");
+    } else {
+      model.setPath("Manage Unactivated");
     }
-    else
-    {
-
-   model.setPath("Manage Unactivated");}
 
     andRefreshDisplay();
 }
@@ -730,7 +728,6 @@ export const handler = async (event) => {
       tid: String(table.number),
       seats: String(table.seats),
     }))
-    console.log("tables look like this:", JSON.stringify(tablesData, null, 2))
     const requestBody = {
       rid: restaurantId,
       hours: {
